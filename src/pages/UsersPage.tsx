@@ -3,7 +3,8 @@ import { adminAPI } from '@/config/api'
 import PageHeader from '@/components/common/PageHeader'
 import DataTable from '@/components/common/DataTable'
 import Pagination from '@/components/common/Pagination'
-import { FiRefreshCw, FiEdit2, FiCheck, FiX, FiTrash2 } from 'react-icons/fi'
+import { FiRefreshCw, FiEdit2, FiCheck, FiX, FiTrash2, FiDollarSign } from 'react-icons/fi'
+import PartyWallet from '@/components/common/PartyWallet'
 
 const ROLES = ['cast_agency','talent','production_crew','content_creator',
                'aggregator_scout','production_studio','location_scout','academy','casting_admin']
@@ -61,6 +62,7 @@ export default function UsersPage() {
   const paged  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   const [deleteResult, setDeleteResult] = useState<any | null>(null)
+  const [walletPartyId, setWalletPartyId] = useState<string | null>(null)
 
   const handleDeleteUser = async (partyId: string, name: string) => {
     if (!confirm(`⚠️ Delete ALL data for "${name}" (${partyId})?\n\nThis will permanently delete:\n• All talent profiles\n• Agency roster entries\n• Join requests\n• Invitations\n• Party profile\n\nThis CANNOT be undone.`)) return
@@ -171,6 +173,10 @@ export default function UsersPage() {
                     className="p-1.5 text-orange-400 hover:bg-orange-50 rounded-lg transition" title="Change role">
                     <FiEdit2 className="w-3.5 h-3.5" />
                   </button>
+                  <button onClick={() => setWalletPartyId(r.party_id)}
+                    className="p-1.5 text-green-500 hover:bg-green-50 rounded-lg transition" title="View wallet">
+                    <FiDollarSign className="w-3.5 h-3.5" />
+                  </button>
                   <button onClick={() => handleDeleteUser(r.party_id, [r.name, r.last_name].filter(Boolean).join(' ') || r.party_id)}
                     className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition" title="Delete all user data">
                     <FiTrash2 className="w-3.5 h-3.5" />
@@ -217,6 +223,25 @@ export default function UsersPage() {
               className="w-full py-2 bg-gray-900 text-white rounded-xl text-xs font-black hover:bg-gray-700 transition">
               Close
             </button>
+          </div>
+        </div>
+      )}
+      {/* Wallet modal */}
+      {walletPartyId && (
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl w-full max-w-3xl my-6 shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <div>
+                <h3 className="font-black text-gray-900">Wallet</h3>
+                <p className="text-[10px] font-mono text-gray-400 mt-0.5">{walletPartyId}</p>
+              </div>
+              <button onClick={() => setWalletPartyId(null)} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
+                <FiX className="w-4 h-4 text-gray-400" />
+              </button>
+            </div>
+            <div className="p-6">
+              <PartyWallet partyId={walletPartyId} />
+            </div>
           </div>
         </div>
       )}

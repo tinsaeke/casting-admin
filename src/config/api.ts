@@ -171,3 +171,33 @@ export const adminAPI = {
   subscriptions: () =>
     request<any>('GET', `${API.ACCOUNT}/admin/subscriptions`),
 }
+
+// ── Commission service helpers ─────────────────────────────────────────────────
+const COMMISSION_BASE = 'https://commission.besewonline.com/api'
+const CC = (path: string) => `${COMMISSION_BASE}${path}`
+
+export const commissionAPI = {
+  // Platform fee config
+  getFees: () =>
+    request<any>('GET', CC('/commission/admin/platform-config/booking-fees')),
+  updateFees: (body: { direct_rate: number; agency_self_rate: number; agency_mediated_rate: number; agency_commission_rate: number }) =>
+    request<any>('PUT', CC('/commission/admin/platform-config/booking-fees'), body),
+
+  // Withdrawals
+  pendingWithdrawals: () =>
+    request<any>('GET', CC('/commission/admin/wallet/withdrawals/pending')),
+  withdrawals: (status?: string, page = 1, limit = 20) =>
+    request<any>('GET', `${CC('/commission/admin/wallet/withdrawals')}?${new URLSearchParams({ ...(status ? { status } : {}), page: String(page), limit: String(limit) })}`),
+  approveWithdrawal: (id: string, transaction_reference?: string) =>
+    request<any>('PUT', CC(`/commission/admin/wallet/withdrawals/${id}/approve`), { transaction_reference }),
+  completeWithdrawal: (id: string, transaction_reference: string) =>
+    request<any>('PUT', CC(`/commission/admin/wallet/withdrawals/${id}/complete`), { transaction_reference }),
+  rejectWithdrawal: (id: string, reason: string) =>
+    request<any>('PUT', CC(`/commission/admin/wallet/withdrawals/${id}/reject`), { reason }),
+
+  // Party wallet
+  getWallet: (partyId: string) =>
+    request<any>('GET', CC(`/commission/admin/wallet/party/${partyId}`)),
+  getTransactions: (partyId: string, page = 1, limit = 20) =>
+    request<any>('GET', `${CC(`/commission/admin/wallet/party/${partyId}/transactions`)}?page=${page}&limit=${limit}`),
+}

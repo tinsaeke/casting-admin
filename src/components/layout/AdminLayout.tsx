@@ -5,6 +5,7 @@ import {
   FiGrid, FiUsers, FiFilm, FiFolder, FiUser, FiBriefcase,
   FiVideo, FiBookmark, FiMapPin, FiShield, FiLogOut,
   FiMenu, FiX, FiChevronRight, FiCheckCircle, FiPackage, FiCreditCard,
+  FiSliders, FiArrowDownCircle,
 } from 'react-icons/fi'
 
 const NAV = [
@@ -21,6 +22,8 @@ const NAV = [
   { path: '/trust',         label: 'Trust & Reports',   icon: FiShield },
   { path: '/sub-plans',     label: 'Sub Plans',         icon: FiPackage },
   { path: '/sub-users',     label: 'Subscriptions',     icon: FiCreditCard },
+  { path: '/platform-fees', label: 'Platform Fees',     icon: FiSliders },
+  { path: '/withdrawals',   label: 'Withdrawals',       icon: FiArrowDownCircle },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

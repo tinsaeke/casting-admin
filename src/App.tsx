@@ -14,8 +14,10 @@ const AgenciesPage      = lazy(() => import('@/pages/AgenciesPage'))
 const CompaniesPage     = lazy(() => import('@/pages/CompaniesPage'))
 const AuditionsPage     = lazy(() => import('@/pages/AuditionsPage'))
 const BookingsPage      = lazy(() => import('@/pages/BookingsPage'))
-const SubPlansPage  = lazy(() => import('@/pages/SubPlansPage'))
-const SubUsersPage  = lazy(() => import('@/pages/SubUsersPage'))
+const PlatformFeesPage  = lazy(() => import('@/pages/PlatformFeesPage'))
+const WithdrawalsPage   = lazy(() => import('@/pages/WithdrawalsPage'))
+const SubPlansPage      = lazy(() => import('@/pages/SubPlansPage'))
+const SubUsersPage      = lazy(() => import('@/pages/SubUsersPage'))
 const LocationsPage     = lazy(() => import('@/pages/LocationsPage'))
 const TrustPage         = lazy(() => import('@/pages/TrustPage'))
 
@@ -52,8 +54,10 @@ function AppRoutes() {
                 <Route path="/bookings"    element={<BookingsPage />} />
                 <Route path="/locations"   element={<LocationsPage />} />
                 <Route path="/trust"       element={<TrustPage />} />
-                <Route path="/sub-plans"   element={<SubPlansPage />} />
-                <Route path="/sub-users"   element={<SubUsersPage />} />
+                <Route path="/sub-plans"     element={<SubPlansPage />} />
+                <Route path="/sub-users"     element={<SubUsersPage />} />
+                <Route path="/platform-fees" element={<PlatformFeesPage />} />
+                <Route path="/withdrawals"   element={<WithdrawalsPage />} />
                 <Route path="*"            element={<Navigate to="/" replace />} />
               </Routes>
             </AdminLayout>
