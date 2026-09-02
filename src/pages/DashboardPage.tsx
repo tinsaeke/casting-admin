@@ -5,7 +5,7 @@ import PageHeader from '@/components/common/PageHeader'
 import {
   FiFilm, FiUsers, FiUser, FiBriefcase, FiVideo,
   FiBookmark, FiFolder, FiMapPin, FiLoader, FiRefreshCw,
-  FiSend, FiCheckCircle, FiAlertCircle, FiDollarSign,
+  FiSend, FiCheckCircle, FiAlertCircle, FiCreditCard,
 } from 'react-icons/fi'
 
 const ROLES = ['talent','cast_agency','production_crew','content_creator','aggregator_scout','production_studio','location_scout','academy','casting_admin']
@@ -88,7 +88,7 @@ export default function DashboardPage() {
             <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <h2 className="text-xs font-black text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
-                  <FiDollarSign className="w-4 h-4 text-green-500" /> Commission Summary
+                  <FiCreditCard className="w-4 h-4 text-green-500" /> Commission Summary
                 </h2>
                 <div className="flex gap-1">
                   {(['daily','weekly','monthly'] as const).map(p => (

@@ -165,6 +165,18 @@ export const adminAPI = {
   syncAllLimits: (planId: string) =>
     request<any>('POST', C(`/admin/casting/subscription-usage/${planId}/sync-limits`)),
 
+  // ── Role Change Requests ───────────────────────────────────────────────────
+  roleChangeRequests: (status?: string, page = 1, limit = 20) =>
+    request<any>('GET', C('/admin/casting/role-change-requests', {
+      status: status && status !== 'all' ? status : undefined,
+      page,
+      limit,
+    })),
+  approveRoleChangeRequest: (requestId: string, admin_note?: string) =>
+    request<any>('PATCH', C(`/admin/casting/role-change-requests/${requestId}/approve`), { admin_note }),
+  rejectRoleChangeRequest: (requestId: string, admin_note: string) =>
+    request<any>('PATCH', C(`/admin/casting/role-change-requests/${requestId}/reject`), { admin_note }),
+
   // ── Account service ───────────────────────────────────────────────────────────
   reports: () =>
     request<any>('GET', `${API.ACCOUNT}/account-report/admin`),

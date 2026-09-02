@@ -5,12 +5,13 @@ import {
   FiGrid, FiUsers, FiFilm, FiFolder, FiUser, FiBriefcase,
   FiVideo, FiBookmark, FiMapPin, FiShield, FiLogOut,
   FiMenu, FiX, FiChevronRight, FiCheckCircle, FiPackage, FiCreditCard,
-  FiSliders, FiArrowDownCircle,
+  FiSliders, FiArrowDownCircle, FiUserCheck,
 } from 'react-icons/fi'
 
 const NAV = [
   { path: '/',              label: 'Dashboard',         icon: FiGrid },
   { path: '/users',         label: 'Users',             icon: FiUsers },
+  { path: '/role-requests', label: 'Role Requests',     icon: FiUserCheck },
   { path: '/cast-calls',    label: 'Cast Calls',        icon: FiFilm },
   { path: '/productions',   label: 'Productions',       icon: FiFolder },
   { path: '/talents',       label: 'Talents',           icon: FiUser },

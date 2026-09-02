@@ -312,8 +312,8 @@ export default function BookingsPage() {
               )},
               { key: 'rate', label: 'Rate', render: r => (
                 <span className="font-semibold text-xs">
-                  {r.rate?.amount ? `${r.rate.currency || 'ETB'} ${Number(r.rate.amount).toLocaleString()}` :
-                   r.fee ? `ETB ${Number(r.fee).toLocaleString()}` : '—'}
+                  {r.rate?.amount ? `${Number(r.rate.amount).toLocaleString()} ${r.rate.currency || 'ETB'}` :
+                   r.fee ? `${Number(r.fee).toLocaleString()} ETB` : '—'}
                 </span>
               )},
               { key: 'status', label: 'Status', render: r => {

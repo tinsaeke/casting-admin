@@ -18,6 +18,7 @@ const PlatformFeesPage  = lazy(() => import('@/pages/PlatformFeesPage'))
 const WithdrawalsPage   = lazy(() => import('@/pages/WithdrawalsPage'))
 const SubPlansPage      = lazy(() => import('@/pages/SubPlansPage'))
 const SubUsersPage      = lazy(() => import('@/pages/SubUsersPage'))
+const RoleChangeRequestsPage = lazy(() => import('@/pages/RoleChangeRequestsPage'))
 const LocationsPage     = lazy(() => import('@/pages/LocationsPage'))
 const TrustPage         = lazy(() => import('@/pages/TrustPage'))
 
@@ -43,22 +44,23 @@ function AppRoutes() {
           <PrivateRoute>
             <AdminLayout>
               <Routes>
-                <Route path="/"            element={<DashboardPage />} />
-                <Route path="/users"       element={<UsersPage />} />
-                <Route path="/cast-calls"  element={<CastCallsPage />} />
-                <Route path="/productions" element={<ProductionsPage />} />
-                <Route path="/talents"     element={<TalentsPage />} />
-                <Route path="/agencies"    element={<AgenciesPage />} />
-                <Route path="/companies"   element={<CompaniesPage />} />
-                <Route path="/auditions"   element={<AuditionsPage />} />
-                <Route path="/bookings"    element={<BookingsPage />} />
-                <Route path="/locations"   element={<LocationsPage />} />
-                <Route path="/trust"       element={<TrustPage />} />
+                <Route path="/"              element={<DashboardPage />} />
+                <Route path="/users"         element={<UsersPage />} />
+                <Route path="/role-requests" element={<RoleChangeRequestsPage />} />
+                <Route path="/cast-calls"    element={<CastCallsPage />} />
+                <Route path="/productions"   element={<ProductionsPage />} />
+                <Route path="/talents"       element={<TalentsPage />} />
+                <Route path="/agencies"      element={<AgenciesPage />} />
+                <Route path="/companies"     element={<CompaniesPage />} />
+                <Route path="/auditions"     element={<AuditionsPage />} />
+                <Route path="/bookings"      element={<BookingsPage />} />
+                <Route path="/locations"     element={<LocationsPage />} />
+                <Route path="/trust"         element={<TrustPage />} />
                 <Route path="/sub-plans"     element={<SubPlansPage />} />
                 <Route path="/sub-users"     element={<SubUsersPage />} />
                 <Route path="/platform-fees" element={<PlatformFeesPage />} />
                 <Route path="/withdrawals"   element={<WithdrawalsPage />} />
-                <Route path="*"            element={<Navigate to="/" replace />} />
+                <Route path="*"              element={<Navigate to="/" replace />} />
               </Routes>
             </AdminLayout>
           </PrivateRoute>

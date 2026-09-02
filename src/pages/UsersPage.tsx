@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { adminAPI } from '@/config/api'
 import PageHeader from '@/components/common/PageHeader'
 import DataTable from '@/components/common/DataTable'
 import Pagination from '@/components/common/Pagination'
-import { FiRefreshCw, FiEdit2, FiCheck, FiX, FiTrash2, FiDollarSign } from 'react-icons/fi'
+import { FiRefreshCw, FiEdit2, FiCheck, FiX, FiTrash2, FiCreditCard, FiUserCheck } from 'react-icons/fi'
 import PartyWallet from '@/components/common/PartyWallet'
 
 const ROLES = ['cast_agency','talent','production_crew','content_creator',
@@ -22,6 +23,7 @@ const ROLE_BADGE: Record<string, string> = {
 }
 
 export default function UsersPage() {
+  const navigate = useNavigate()
   const [allData, setAllData]       = useState<any[]>([])
   const [summary, setSummary]       = useState<Record<string, number>>({})
   const [loading, setLoading]       = useState(true)
@@ -87,7 +89,15 @@ export default function UsersPage() {
   return (
     <div>
       <PageHeader title="Users" subtitle={`${total} accounts`} actions={
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap items-center">
+          <button
+            onClick={() => navigate('/role-requests')}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 rounded-lg text-xs font-bold transition shadow-2xs"
+            title="Review Role Change Requests"
+          >
+            <FiUserCheck className="w-3.5 h-3.5" />
+            <span>Role Requests</span>
+          </button>
           <select value={filterRole} onChange={e => { setFilterRole(e.target.value); setPage(1) }}
             className="px-3 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-orange-400">
             <option value="">All roles ({allData.length})</option>
@@ -175,7 +185,7 @@ export default function UsersPage() {
                   </button>
                   <button onClick={() => setWalletPartyId(r.party_id)}
                     className="p-1.5 text-green-500 hover:bg-green-50 rounded-lg transition" title="View wallet">
-                    <FiDollarSign className="w-3.5 h-3.5" />
+                    <FiCreditCard className="w-3.5 h-3.5" />
                   </button>
                   <button onClick={() => handleDeleteUser(r.party_id, [r.name, r.last_name].filter(Boolean).join(' ') || r.party_id)}
                     className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition" title="Delete all user data">

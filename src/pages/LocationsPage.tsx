@@ -95,7 +95,7 @@ export default function LocationsPage() {
               { key: 'location_type', label: 'Type', render: r => r.location_type?.replace(/_/g,' ') || '—' },
               { key: 'city', label: 'City' },
               { key: 'daily_rate', label: 'Rate/Day', render: r => r.daily_rate?.amount
-                ? `${r.daily_rate.currency || 'ETB'} ${Number(r.daily_rate.amount).toLocaleString()}` : '—'
+                ? `${Number(r.daily_rate.amount).toLocaleString()} ${r.daily_rate.currency || 'ETB'}` : '—'
               },
               { key: 'availability_status', label: 'Available', render: r => (
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${r.availability_status === 'available' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>

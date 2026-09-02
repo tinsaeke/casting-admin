@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { commissionAPI } from '@/config/api'
-import { FiRefreshCw, FiTrendingUp, FiArrowDown, FiDollarSign } from 'react-icons/fi'
+import { FiRefreshCw, FiTrendingUp, FiArrowDown, FiCreditCard } from 'react-icons/fi'
 
 interface Props { partyId: string }
 
@@ -35,7 +35,7 @@ export default function PartyWallet({ partyId }: Props) {
   const handlePage = (p: number) => { setTxPage(p); load(p) }
 
   const fmtAmt = (v: number, currency = 'ETB') =>
-    `${v >= 0 ? '' : ''}${Math.abs(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`
+    `${Math.abs(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`
 
   if (loading && !wallet) return (
     <div className="flex justify-center py-8">
@@ -53,7 +53,7 @@ export default function PartyWallet({ partyId }: Props) {
       {wallet && (
         <div className="grid grid-cols-3 gap-3">
           {[
-            { icon: FiDollarSign,  label: 'Available Balance', value: wallet.available_balance ?? wallet.balance ?? 0,  color: 'text-gray-900' },
+            { icon: FiCreditCard,  label: 'Available Balance', value: wallet.available_balance ?? wallet.balance ?? 0,  color: 'text-gray-900' },
             { icon: FiTrendingUp,  label: 'Total Earned',      value: wallet.total_earned      ?? wallet.totalEarned ?? 0, color: 'text-green-700' },
             { icon: FiArrowDown,   label: 'Total Withdrawn',   value: wallet.total_withdrawn   ?? wallet.totalWithdrawn ?? 0, color: 'text-red-600' },
           ].map(({ icon: Icon, label, value, color }) => (

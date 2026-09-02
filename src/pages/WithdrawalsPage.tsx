@@ -131,7 +131,7 @@ export default function WithdrawalsPage() {
                 <span className="text-xs font-bold text-gray-900">{(r.amount || 0).toLocaleString()} ETB</span>
               )},
               { key: 'fee', label: 'Fee', render: r => (
-                <span className="text-xs text-gray-500">{(r.fee || r.withdrawal_fee || 0).toLocaleString()}</span>
+                <span className="text-xs text-gray-500">{(r.fee || r.withdrawal_fee || 0).toLocaleString()} ETB</span>
               )},
               { key: 'net', label: 'Net', render: r => {
                 const net = (r.net_amount ?? r.net ?? ((r.amount || 0) - (r.fee || r.withdrawal_fee || 0)))

@@ -5,18 +5,54 @@ import DataTable from '@/components/common/DataTable'
 import Pagination from '@/components/common/Pagination'
 import {
   FiRefreshCw, FiSearch, FiX, FiCheck, FiTrash2,
-  FiArrowUp, FiActivity, FiRotateCcw, FiUser,
+  FiArrowUp, FiActivity, FiRotateCcw, FiUser, FiPhone,
 } from 'react-icons/fi'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Sub {
-  partyId: string
+  _id?: string
+  party_id?: string
+  partyId?: string
   type: string
   period: string
   status: string
+  features?: string[]
+  expires_at?: number | string
+  expiresAt?: number | string
+  durationInDays?: number
+  price?: number
+  description?: string
+  created_at?: string
+  updated_at?: string
+  createdAt?: string
+  updatedAt?: string
   startDate?: string
   endDate?: string
   daysRemaining?: number
+}
+
+function formatSubDate(val?: string | number | null): string {
+  if (!val) return '—'
+  try {
+    const num = typeof val === 'number' ? val : !isNaN(Number(val)) ? Number(val) : val
+    const d = new Date(num)
+    if (isNaN(d.getTime())) return '—'
+    return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+  } catch {
+    return '—'
+  }
+}
+
+function calculateDaysLeft(val?: string | number | null): number | null {
+  if (!val) return null
+  try {
+    const num = typeof val === 'number' ? val : !isNaN(Number(val)) ? Number(val) : val
+    const time = new Date(num).getTime()
+    if (isNaN(time)) return null
+    return Math.max(0, Math.ceil((time - Date.now()) / (1000 * 60 * 60 * 24)))
+  } catch {
+    return null
+  }
 }
 
 interface Usage {
@@ -73,6 +109,7 @@ function UsageBar({ used, limit, label }: { used: number; limit: number; label: 
 // ── Main ─────────────────────────────────────────────────────────────────────
 export default function SubUsersPage() {
   const [subs,     setSubs]    = useState<Sub[]>([])
+  const [partyMap, setPartyMap] = useState<Record<string, any>>({})
   const [loading,  setLoading] = useState(true)
   const [page,     setPage]    = useState(1)
   const [pages,    setPages]   = useState(1)
@@ -100,10 +137,35 @@ export default function SubUsersPage() {
   const load = async () => {
     setLoading(true)
     try {
-      const res = await adminAPI.castingSubscriptions({ type: filterType || undefined, status: filterStatus || undefined, page, limit: PAGE_SIZE })
-      const data = Array.isArray(res) ? res : res?.data || []
+      const [res, rolesRes] = await Promise.allSettled([
+        adminAPI.castingSubscriptions({ type: filterType || undefined, status: filterStatus || undefined, page, limit: PAGE_SIZE }),
+        adminAPI.castingRoles(),
+      ])
+
+      const pMap: Record<string, any> = { ...partyMap }
+      if (rolesRes.status === 'fulfilled') {
+        const rolesData = rolesRes.value?.data || (Array.isArray(rolesRes.value) ? rolesRes.value : [])
+        rolesData.forEach((u: any) => {
+          const pid = u.party_id || u.partyId || u.id || u._id
+          if (pid) pMap[pid] = u
+        })
+        setPartyMap(pMap)
+      }
+
+      const rawList = res.status === 'fulfilled' ? (Array.isArray(res.value) ? res.value : res.value?.data || []) : []
+      const data: Sub[] = rawList.map((item: any) => {
+        const partyId = item.party_id || item.partyId || item._id || ''
+        const expiry = item.expires_at ?? item.expiresAt ?? item.endDate
+        const daysLeft = item.daysRemaining !== undefined ? item.daysRemaining : calculateDaysLeft(expiry)
+        return {
+          ...item,
+          partyId,
+          party_id: partyId,
+          daysRemaining: daysLeft ?? undefined,
+        }
+      })
       setSubs(data)
-      const pg = res?.pagination || res?.meta || {}
+      const pg = res.status === 'fulfilled' ? (res.value?.pagination || res.value?.meta || {}) : {}
       setTotal(pg.total || data.length)
       setPages(Math.max(1, pg.pages || pg.totalPages || Math.ceil((pg.total || data.length) / PAGE_SIZE)))
     } catch {}
@@ -200,65 +262,91 @@ export default function SubUsersPage() {
         </div>
 
         {/* Single user result */}
-        {singleSub && (
-          <div className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-4">
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <FiUser className="w-3.5 h-3.5 text-gray-400" />
-                  <span className="text-xs font-black text-gray-900">{singleSub.partyId || searchId}</span>
-                  {singleSub.type && (
-                    <span className={`px-2 py-0.5 rounded-full border text-[10px] font-black uppercase ${TYPE_BADGE[singleSub.type] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>{singleSub.type}</span>
-                  )}
-                  {singleSub.status && (
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black capitalize ${STATUS_BADGE[singleSub.status] || 'bg-gray-100 text-gray-500'}`}>{singleSub.status}</span>
-                  )}
-                </div>
-                <div className="flex gap-3 text-[10px] text-gray-500 flex-wrap">
-                  {singleSub.period    && <span>Period: <b>{singleSub.period}</b></span>}
-                  {singleSub.startDate && <span>Start: <b>{new Date(singleSub.startDate).toLocaleDateString()}</b></span>}
-                  {singleSub.endDate   && <span>Expires: <b>{new Date(singleSub.endDate).toLocaleDateString()}</b></span>}
-                  {singleSub.daysRemaining !== undefined && <span>Days left: <b>{singleSub.daysRemaining}</b></span>}
-                </div>
-              </div>
-              {/* Action buttons */}
-              <div className="flex gap-1.5 flex-wrap">
-                <button onClick={() => openModal('assign',  searchId)}
-                  className="flex items-center gap-1 px-2.5 py-1.5 bg-green-50 border border-green-200 text-green-700 rounded-lg text-[10px] font-bold hover:bg-green-100 transition">
-                  <FiCheck className="w-3 h-3" /> Assign
-                </button>
-                <button onClick={() => openModal('upgrade', searchId)}
-                  className="flex items-center gap-1 px-2.5 py-1.5 bg-purple-50 border border-purple-200 text-purple-700 rounded-lg text-[10px] font-bold hover:bg-purple-100 transition">
-                  <FiArrowUp className="w-3 h-3" /> Upgrade
-                </button>
-                <button onClick={() => openModal('reset',   searchId)}
-                  className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg text-[10px] font-bold hover:bg-blue-100 transition">
-                  <FiRotateCcw className="w-3 h-3" /> Reset Usage
-                </button>
-                <button onClick={() => openModal('sync',    searchId)}
-                  className="flex items-center gap-1 px-2.5 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg text-[10px] font-bold hover:bg-amber-100 transition">
-                  <FiActivity className="w-3 h-3" /> Sync Limits
-                </button>
-                <button onClick={() => openModal('cancel',  searchId)}
-                  className="flex items-center gap-1 px-2.5 py-1.5 bg-red-50 border border-red-200 text-red-600 rounded-lg text-[10px] font-bold hover:bg-red-100 transition">
-                  <FiTrash2 className="w-3 h-3" /> Cancel
-                </button>
-              </div>
-            </div>
+        {singleSub && (() => {
+          const pId = singleSub.party_id || singleSub.partyId || searchId
+          const pInfo = partyMap[pId]
+          const fullName = pInfo ? [pInfo.name, pInfo.last_name].filter(Boolean).join(' ') : null
 
-            {/* Usage bars */}
-            {singleUsage && (
-              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <UsageBar label="Casting Calls"     used={singleUsage.castingCallsUsed}      limit={singleUsage.castingCallsLimit} />
-                <UsageBar label="Audition Reviews"  used={singleUsage.auditionReviewsUsed}   limit={singleUsage.auditionReviewsLimit} />
-                <UsageBar label="AI Script Analyses"used={singleUsage.aiScriptAnalysesUsed}  limit={singleUsage.aiScriptAnalysesLimit} />
-                <UsageBar label="Talent Searches"   used={singleUsage.talentSearchesUsed}    limit={singleUsage.talentSearchesLimit} />
-                <UsageBar label="Bookings"          used={singleUsage.bookingsUsed}           limit={singleUsage.bookingsLimit} />
-                <UsageBar label="Location Scouting" used={singleUsage.locationScoutingUsed}  limit={singleUsage.locationScoutingLimit} />
+          return (
+            <div className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <div className="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center font-black text-xs shrink-0">
+                      {fullName ? fullName.charAt(0).toUpperCase() : <FiUser className="w-4 h-4" />}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-black text-gray-900">{fullName || pId}</span>
+                        {pInfo?.phone_number && (
+                          <span className="flex items-center gap-1 text-xs text-gray-600 bg-white border border-gray-200 px-2 py-0.5 rounded-md font-mono">
+                            <FiPhone className="w-3 h-3 text-orange-500" /> {pInfo.phone_number}
+                          </span>
+                        )}
+                        {pInfo?.casting_role && (
+                          <span className="px-2 py-0.5 rounded-full border text-[10px] font-black uppercase bg-blue-50 text-blue-700 border-blue-200">
+                            {pInfo.casting_role.replace(/_/g, ' ')}
+                          </span>
+                        )}
+                        {singleSub.type && (
+                          <span className={`px-2 py-0.5 rounded-full border text-[10px] font-black uppercase ${TYPE_BADGE[singleSub.type] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>{singleSub.type}</span>
+                        )}
+                        {singleSub.status && (
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-black capitalize ${STATUS_BADGE[singleSub.status] || 'bg-gray-100 text-gray-500'}`}>{singleSub.status}</span>
+                        )}
+                      </div>
+                      <p className="font-mono text-[10px] text-gray-400 mt-0.5">{pId}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 text-[10px] text-gray-500 flex-wrap pl-10">
+                    {singleSub.period && <span>Period: <b className="capitalize">{singleSub.period}</b></span>}
+                    <span>Start: <b>{formatSubDate(singleSub.created_at || singleSub.createdAt || singleSub.startDate)}</b></span>
+                    <span>Expires: <b>{formatSubDate(singleSub.expires_at || singleSub.expiresAt || singleSub.endDate)}</b></span>
+                    {(() => {
+                      const days = singleSub.daysRemaining ?? calculateDaysLeft(singleSub.expires_at || singleSub.expiresAt || singleSub.endDate)
+                      return days !== null ? <span>Days left: <b className={days <= 7 ? 'text-red-500' : 'text-gray-800'}>{days}d</b></span> : null
+                    })()}
+                  </div>
+                </div>
+                {/* Action buttons */}
+                <div className="flex gap-1.5 flex-wrap">
+                  <button onClick={() => openModal('assign',  pId)}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-green-50 border border-green-200 text-green-700 rounded-lg text-[10px] font-bold hover:bg-green-100 transition">
+                    <FiCheck className="w-3 h-3" /> Assign
+                  </button>
+                  <button onClick={() => openModal('upgrade', pId)}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-purple-50 border border-purple-200 text-purple-700 rounded-lg text-[10px] font-bold hover:bg-purple-100 transition">
+                    <FiArrowUp className="w-3 h-3" /> Upgrade
+                  </button>
+                  <button onClick={() => openModal('reset',   pId)}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg text-[10px] font-bold hover:bg-blue-100 transition">
+                    <FiRotateCcw className="w-3 h-3" /> Reset Usage
+                  </button>
+                  <button onClick={() => openModal('sync',    pId)}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg text-[10px] font-bold hover:bg-amber-100 transition">
+                    <FiActivity className="w-3 h-3" /> Sync Limits
+                  </button>
+                  <button onClick={() => openModal('cancel',  pId)}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-red-50 border border-red-200 text-red-600 rounded-lg text-[10px] font-bold hover:bg-red-100 transition">
+                    <FiTrash2 className="w-3 h-3" /> Cancel
+                  </button>
+                </div>
               </div>
-            )}
-          </div>
-        )}
+
+              {/* Usage bars */}
+              {singleUsage && (
+                <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <UsageBar label="Casting Calls"     used={singleUsage.castingCallsUsed}      limit={singleUsage.castingCallsLimit} />
+                  <UsageBar label="Audition Reviews"  used={singleUsage.auditionReviewsUsed}   limit={singleUsage.auditionReviewsLimit} />
+                  <UsageBar label="AI Script Analyses"used={singleUsage.aiScriptAnalysesUsed}  limit={singleUsage.aiScriptAnalysesLimit} />
+                  <UsageBar label="Talent Searches"   used={singleUsage.talentSearchesUsed}    limit={singleUsage.talentSearchesLimit} />
+                  <UsageBar label="Bookings"          used={singleUsage.bookingsUsed}           limit={singleUsage.bookingsLimit} />
+                  <UsageBar label="Location Scouting" used={singleUsage.locationScoutingUsed}  limit={singleUsage.locationScoutingLimit} />
+                </div>
+              )}
+            </div>
+          )
+        })()}
       </div>
 
       {/* Filters */}
@@ -278,11 +366,50 @@ export default function SubUsersPage() {
       {/* Table */}
       <div className="p-6">
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-          <DataTable loading={loading} data={subs} keyField="partyId" emptyMsg="No subscriptions found"
+          <DataTable loading={loading} data={subs} keyField="_id" emptyMsg="No subscriptions found"
             columns={[
-              { key: 'partyId', label: 'Party ID', render: r => (
-                <span className="font-mono text-[10px] text-gray-600">{r.partyId}</span>
-              )},
+              { key: 'subscriber', label: 'Subscriber', render: r => {
+                const pId = r.party_id || r.partyId || ''
+                const pInfo = partyMap[pId]
+                const fullName = pInfo ? [pInfo.name, pInfo.last_name].filter(Boolean).join(' ') : null
+                return (
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-orange-50 border border-orange-200 text-orange-600 flex items-center justify-center shrink-0 font-black text-xs">
+                      {fullName ? fullName.charAt(0).toUpperCase() : <FiUser className="w-3.5 h-3.5" />}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-bold text-gray-900 text-xs">
+                          {fullName || '—'}
+                        </span>
+                        {pInfo?.casting_role && (
+                          <span className="px-1.5 py-0.2 rounded text-[8px] font-black uppercase bg-gray-100 text-gray-600 border border-gray-200">
+                            {pInfo.casting_role.replace(/_/g, ' ')}
+                          </span>
+                        )}
+                      </div>
+                      <p className="font-mono text-[10px] text-gray-400">{pId || '—'}</p>
+                    </div>
+                  </div>
+                )
+              }},
+              { key: 'phone', label: 'Phone Number', render: r => {
+                const pId = r.party_id || r.partyId || ''
+                const pInfo = partyMap[pId]
+                const phone = pInfo?.phone_number
+                return (
+                  <div className="flex items-center gap-1.5 text-xs text-gray-700 font-medium whitespace-nowrap">
+                    {phone ? (
+                      <>
+                        <FiPhone className="w-3 h-3 text-orange-500 shrink-0" />
+                        <span className="font-mono">{phone}</span>
+                      </>
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
+                  </div>
+                )
+              }},
               { key: 'type', label: 'Plan', render: r => (
                 <span className={`px-2 py-0.5 rounded-full border text-[10px] font-black uppercase ${TYPE_BADGE[r.type] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>{r.type || '—'}</span>
               )},
@@ -292,32 +419,42 @@ export default function SubUsersPage() {
               { key: 'status', label: 'Status', render: r => (
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-black capitalize ${STATUS_BADGE[r.status] || 'bg-gray-100 text-gray-500'}`}>{r.status || '—'}</span>
               )},
-              { key: 'endDate', label: 'Expires', render: r => r.endDate ? new Date(r.endDate).toLocaleDateString() : '—' },
-              { key: 'daysRemaining', label: 'Days Left', render: r => (
-                <span className={`text-[10px] font-bold ${(r.daysRemaining ?? 99) <= 7 ? 'text-red-500' : 'text-gray-700'}`}>
-                  {r.daysRemaining !== undefined ? r.daysRemaining : '—'}
+              { key: 'endDate', label: 'Expires', render: r => (
+                <span className="text-xs text-gray-600 font-medium whitespace-nowrap">
+                  {formatSubDate(r.expires_at || r.expiresAt || r.endDate)}
                 </span>
               )},
-              { key: 'actions', label: '', render: r => (
-                <div className="flex gap-1">
-                  <button onClick={() => { setSearchId(r.partyId); setSingleSub(r); setSingleUsage(null); adminAPI.getUsage(r.partyId).then(setSingleUsage).catch(() => {}) }}
-                    className="p-1.5 text-gray-400 hover:bg-gray-50 rounded-lg transition" title="View details">
-                    <FiSearch className="w-3.5 h-3.5" />
-                  </button>
-                  <button onClick={() => openModal('assign',  r.partyId)}
-                    className="p-1.5 text-green-500 hover:bg-green-50 rounded-lg transition" title="Assign">
-                    <FiCheck className="w-3.5 h-3.5" />
-                  </button>
-                  <button onClick={() => openModal('upgrade', r.partyId)}
-                    className="p-1.5 text-purple-500 hover:bg-purple-50 rounded-lg transition" title="Upgrade">
-                    <FiArrowUp className="w-3.5 h-3.5" />
-                  </button>
-                  <button onClick={() => openModal('cancel',  r.partyId)}
-                    className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition" title="Cancel">
-                    <FiTrash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              )},
+              { key: 'daysRemaining', label: 'Days Left', render: r => {
+                const days = r.daysRemaining !== undefined ? r.daysRemaining : calculateDaysLeft(r.expires_at || r.expiresAt || r.endDate)
+                return (
+                  <span className={`text-[11px] font-bold ${days !== null && days <= 7 ? 'text-red-500' : 'text-gray-700'}`}>
+                    {days !== null ? `${days}d` : '—'}
+                  </span>
+                )
+              }},
+              { key: 'actions', label: '', render: r => {
+                const pId = r.party_id || r.partyId || r._id || ''
+                return (
+                  <div className="flex gap-1">
+                    <button onClick={() => { setSearchId(pId); setSingleSub(r); setSingleUsage(null); adminAPI.getUsage(pId).then(setSingleUsage).catch(() => {}) }}
+                      className="p-1.5 text-gray-400 hover:bg-gray-50 rounded-lg transition" title="View details">
+                      <FiSearch className="w-3.5 h-3.5" />
+                    </button>
+                    <button onClick={() => openModal('assign',  pId)}
+                      className="p-1.5 text-green-500 hover:bg-green-50 rounded-lg transition" title="Assign">
+                      <FiCheck className="w-3.5 h-3.5" />
+                    </button>
+                    <button onClick={() => openModal('upgrade', pId)}
+                      className="p-1.5 text-purple-500 hover:bg-purple-50 rounded-lg transition" title="Upgrade">
+                      <FiArrowUp className="w-3.5 h-3.5" />
+                    </button>
+                    <button onClick={() => openModal('cancel',  pId)}
+                      className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition" title="Cancel">
+                      <FiTrash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )
+              }},
             ]}
           />
           <Pagination page={page} pages={pages} total={total} onChange={p => setPage(p)} />
