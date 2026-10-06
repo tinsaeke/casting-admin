@@ -226,7 +226,7 @@ export default function ReplicaKycPage() {
 
   const columns = [
     {
-      header: 'Actor & Replica',
+      key: 'display_name', label: 'Actor & Replica',
       render: (r: DigitalReplicaItem) => {
         const photo = r.headshot_url || r.photo_urls?.[0]
         return (
@@ -250,7 +250,7 @@ export default function ReplicaKycPage() {
       },
     },
     {
-      header: 'KYC Status & Method',
+      key: 'kyc_status', label: 'KYC Status & Method',
       render: (r: DigitalReplicaItem) => (
         <div>
           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${KYC_STATUS_BADGE[r.kyc_status] || 'bg-gray-100 text-gray-700'}`}>
@@ -268,7 +268,7 @@ export default function ReplicaKycPage() {
       ),
     },
     {
-      header: 'Consent & Version',
+      key: 'consent_version', label: 'Consent & Version',
       render: (r: DigitalReplicaItem) => {
         const hash = r.consent_text_hash || r.consent_hash
         return (
@@ -296,7 +296,7 @@ export default function ReplicaKycPage() {
       },
     },
     {
-      header: 'Modality Products',
+      key: 'products', label: 'Modality Products',
       render: (r: DigitalReplicaItem) => (
         <div className="flex flex-wrap gap-1 max-w-xs">
           {(r.products || ['full_actor']).map(p => (
@@ -313,7 +313,7 @@ export default function ReplicaKycPage() {
       ),
     },
     {
-      header: 'Base Rate',
+      key: 'per_project_etb', label: 'Base Rate',
       render: (r: DigitalReplicaItem) => (
         <div className="font-mono">
           <span className="text-xs font-black text-gray-900">
@@ -324,7 +324,7 @@ export default function ReplicaKycPage() {
       ),
     },
     {
-      header: 'Replica Status',
+      key: 'status', label: 'Replica Status',
       render: (r: DigitalReplicaItem) => (
         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${REPLICA_STATUS_BADGE[r.status] || 'bg-gray-100 text-gray-700'}`}>
           {r.status || 'draft'}
@@ -332,7 +332,7 @@ export default function ReplicaKycPage() {
       ),
     },
     {
-      header: 'Actions',
+      key: 'actions', label: 'Actions',
       render: (r: DigitalReplicaItem) => {
         const isPending = r.kyc_status === 'pending'
         const isRevoked = r.status === 'revoked'
@@ -536,14 +536,15 @@ export default function ReplicaKycPage() {
             columns={columns}
             data={filtered}
             loading={loading}
-            emptyMessage="No digital replicas found in this queue"
+            emptyMsg="No digital replicas found in this queue"
           />
 
           <div className="p-4 border-t border-gray-100">
             <Pagination
-              currentPage={page}
-              totalPages={Math.ceil(total / limit) || 1}
-              onPageChange={setPage}
+              page={page}
+              pages={Math.ceil(total / limit) || 1}
+              total={total}
+              onChange={setPage}
             />
           </div>
         </div>

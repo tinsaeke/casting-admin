@@ -117,7 +117,7 @@ export default function AvatarLicensesPage() {
 
   const columns = [
     {
-      header: 'License ID',
+      key: 'license_id', label: 'License ID',
       render: (l: AvatarLicense) => {
         const dateStr = l.created_at || l.createdAt
         return (
@@ -133,7 +133,7 @@ export default function AvatarLicensesPage() {
       },
     },
     {
-      header: 'Actor / Talent',
+      key: 'talent_name', label: 'Actor / Talent',
       render: (l: AvatarLicense) => (
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-black text-xs flex items-center justify-center overflow-hidden shrink-0 border border-purple-200">
@@ -153,7 +153,7 @@ export default function AvatarLicensesPage() {
       ),
     },
     {
-      header: 'Buyer / Licensee',
+      key: 'customer_name', label: 'Buyer / Licensee',
       render: (l: AvatarLicense) => (
         <div>
           <p className="text-xs font-bold text-gray-900">{l.customer_name || l.buyer_party_id || 'Buyer'}</p>
@@ -162,7 +162,7 @@ export default function AvatarLicensesPage() {
       ),
     },
     {
-      header: 'Purchased Uses',
+      key: 'purchased_uses', label: 'Purchased Uses',
       render: (l: AvatarLicense) => (
         <div className="flex flex-wrap gap-1 max-w-xs">
           {(l.purchased_uses || []).slice(0, 2).map(u => (
@@ -179,7 +179,7 @@ export default function AvatarLicensesPage() {
       ),
     },
     {
-      header: 'Uses',
+      key: 'uses_remaining', label: 'Uses',
       render: (l: AvatarLicense) => {
         const allowed = l.uses_allowed ?? l.total_uses ?? 1
         return (
@@ -191,7 +191,7 @@ export default function AvatarLicensesPage() {
       },
     },
     {
-      header: 'Amount / Split',
+      key: 'amount_etb', label: 'Amount / Split',
       render: (l: AvatarLicense) => {
         const actorAmount = l.actor_payout_etb ?? Math.round(Number(l.amount_etb || 0) * (l.actor_rate_snapshot || 0.7))
         const platformAmount = l.platform_fee_etb ?? Math.round(Number(l.amount_etb || 0) * (l.platform_rate_snapshot || 0.3))
@@ -204,7 +204,7 @@ export default function AvatarLicensesPage() {
       },
     },
     {
-      header: 'Status',
+      key: 'status', label: 'Status',
       render: (l: AvatarLicense) => (
         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${STATUS_BADGE[l.status] || 'bg-gray-100 text-gray-700'}`}>
           {l.status?.replace('_', ' ')}
@@ -212,7 +212,7 @@ export default function AvatarLicensesPage() {
       ),
     },
     {
-      header: 'Action',
+      key: 'action', label: 'Action',
       render: (l: AvatarLicense) => (
         <button
           onClick={() => setSelectedLicense(l)}
@@ -321,14 +321,15 @@ export default function AvatarLicensesPage() {
             columns={columns}
             data={filtered}
             loading={loading}
-            emptyMessage="No AI avatar licenses found"
+            emptyMsg="No AI avatar licenses found"
           />
 
           <div className="p-4 border-t border-gray-100">
             <Pagination
-              currentPage={page}
-              totalPages={Math.ceil(total / limit) || 1}
-              onPageChange={setPage}
+              page={page}
+              pages={Math.ceil(total / limit) || 1}
+              total={total}
+              onChange={setPage}
             />
           </div>
         </div>
