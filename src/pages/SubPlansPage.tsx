@@ -17,7 +17,8 @@ interface Plan {
   description: string
   features: string[]
   isActive: boolean
-  isPopular: boolean
+  isPopular?: boolean
+  isRecommended?: boolean
   sortOrder: number
   /** API returns string[] — legacy plans may still send a plain string */
   audience: string | string[]
@@ -27,7 +28,10 @@ interface Plan {
   maxTalentSearches: number
   maxBookings: number
   maxLocationScouting: number
+  maxVideoGenerations?: number
   extraQuotas?: Record<string, number>
+  createdAt?: string
+  updatedAt?: string
 }
 
 /** Normalise whatever the API sends to a string[] */
@@ -88,6 +92,7 @@ interface FormState {
   features: string       // newline-separated textarea
   isActive: boolean
   isPopular: boolean
+  isRecommended: boolean
   sortOrder: number
   audience: string[]     // always an array now
   maxCastingCalls: number
@@ -96,15 +101,17 @@ interface FormState {
   maxTalentSearches: number
   maxBookings: number
   maxLocationScouting: number
+  maxVideoGenerations: number
   extraQuotas: string    // JSON textarea
 }
 
 const EMPTY_FORM: FormState = {
   type: 'growth', period: 'annual', durationInDays: 365, price: 0,
-  description: '', features: '', isActive: true, isPopular: false,
+  description: '', features: '', isActive: true, isPopular: false, isRecommended: false,
   sortOrder: 1, audience: ['all'],
   maxCastingCalls: 10, maxAuditionReviews: 100, maxAiScriptAnalyses: 10,
   maxTalentSearches: 200, maxBookings: 20, maxLocationScouting: 30,
+  maxVideoGenerations: 30,
   extraQuotas: '',
 }
 
@@ -137,6 +144,61 @@ function QRow({ label, field, val, onChange }: { label: string; field: string; v
       />
     </div>
   )
+}
+
+/** Pretty labels for quota fields */
+function formatQuotaKey(key: string): string {
+  let clean = key.startsWith('max') ? key.slice(3) : key
+  clean = clean.replace(/^Ai([A-Z])/, 'AI $1')
+  return clean
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/_/g, ' ')
+    .trim()
+    .replace(/^Ai\b/i, 'AI')
+}
+
+/** Automatically extracts all standard and dynamic quotas fetched from the backend */
+function extractAllQuotas(plan: Record<string, any>): { key: string; label: string; value: number }[] {
+  const quotas: { key: string; label: string; value: number }[] = []
+  const seen = new Set<string>()
+
+  // Standard ordered primary quota keys
+  const primaryKeys = [
+    'maxCastingCalls',
+    'maxAuditionReviews',
+    'maxAiScriptAnalyses',
+    'maxTalentSearches',
+    'maxBookings',
+    'maxLocationScouting',
+    'maxVideoGenerations',
+  ]
+
+  primaryKeys.forEach(k => {
+    if (k in plan && typeof plan[k] === 'number') {
+      quotas.push({ key: k, label: formatQuotaKey(k), value: plan[k] })
+      seen.add(k)
+    }
+  })
+
+  // Automatically find any OTHER numeric quota fields returned by the backend (starting with max)
+  Object.keys(plan).forEach(k => {
+    if (!seen.has(k) && k.startsWith('max') && typeof plan[k] === 'number') {
+      quotas.push({ key: k, label: formatQuotaKey(k), value: plan[k] })
+      seen.add(k)
+    }
+  })
+
+  // Also include any extraQuotas dictionary entries
+  if (plan.extraQuotas && typeof plan.extraQuotas === 'object') {
+    Object.entries(plan.extraQuotas).forEach(([k, v]) => {
+      if (!seen.has(k) && typeof v === 'number') {
+        quotas.push({ key: k, label: formatQuotaKey(k), value: v })
+        seen.add(k)
+      }
+    })
+  }
+
+  return quotas
 }
 
 // ── Audience multi-select checkboxes ─────────────────────────────────────────
@@ -303,18 +365,20 @@ export default function SubPlansPage() {
   const openEdit = (p: Plan) => {
     setForm({
       type: p.type, period: p.period, durationInDays: p.durationInDays, price: p.price,
-      description: p.description,
-      features: p.features.join('\n'),
+      description: p.description || '',
+      features: (p.features || []).join('\n'),
       isActive: p.isActive,
-      isPopular: p.isPopular,
-      sortOrder: p.sortOrder,
+      isPopular: p.isPopular ?? false,
+      isRecommended: p.isRecommended ?? false,
+      sortOrder: p.sortOrder ?? 1,
       audience: toAudienceArray(p.audience),   // always normalise to string[]
-      maxCastingCalls:    p.maxCastingCalls,
-      maxAuditionReviews: p.maxAuditionReviews,
-      maxAiScriptAnalyses: p.maxAiScriptAnalyses,
-      maxTalentSearches:  p.maxTalentSearches,
-      maxBookings:        p.maxBookings,
-      maxLocationScouting: p.maxLocationScouting,
+      maxCastingCalls:     p.maxCastingCalls ?? 0,
+      maxAuditionReviews:  p.maxAuditionReviews ?? 0,
+      maxAiScriptAnalyses: p.maxAiScriptAnalyses ?? 0,
+      maxTalentSearches:   p.maxTalentSearches ?? 0,
+      maxBookings:         p.maxBookings ?? 0,
+      maxLocationScouting: p.maxLocationScouting ?? 0,
+      maxVideoGenerations: p.maxVideoGenerations ?? 0,
       extraQuotas: p.extraQuotas ? JSON.stringify(p.extraQuotas, null, 2) : '',
     })
     if (!typeList.includes(p.type))     setTypeList(prev => [...prev, p.type])
@@ -337,14 +401,18 @@ export default function SubPlansPage() {
         type: form.type, period: form.period, durationInDays: form.durationInDays,
         price: form.price, description: form.description,
         features: form.features.split('\n').map(s => s.trim()).filter(Boolean),
-        isActive: form.isActive, isPopular: form.isPopular, sortOrder: form.sortOrder,
+        isActive: form.isActive,
+        isPopular: form.isPopular,
+        isRecommended: form.isRecommended,
+        sortOrder: form.sortOrder,
         audience: form.audience,    // ← always sent as string[]
-        maxCastingCalls:    form.maxCastingCalls,
-        maxAuditionReviews: form.maxAuditionReviews,
+        maxCastingCalls:     form.maxCastingCalls,
+        maxAuditionReviews:  form.maxAuditionReviews,
         maxAiScriptAnalyses: form.maxAiScriptAnalyses,
-        maxTalentSearches:  form.maxTalentSearches,
-        maxBookings:        form.maxBookings,
+        maxTalentSearches:   form.maxTalentSearches,
+        maxBookings:         form.maxBookings,
         maxLocationScouting: form.maxLocationScouting,
+        maxVideoGenerations: form.maxVideoGenerations,
       }
       if (form.extraQuotas.trim()) {
         try { body.extraQuotas = JSON.parse(form.extraQuotas) }
@@ -489,6 +557,7 @@ export default function SubPlansPage() {
                             <span className="px-2 py-0.5 rounded-full border text-[10px] font-black uppercase bg-gray-100 text-gray-600 border-gray-200">{p.type}</span>
                             <span className="text-[10px] text-gray-400 font-semibold capitalize">{p.period.replace(/_/g, ' ')}</span>
                             {p.isPopular && <span className="px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded text-[9px] font-black">POPULAR</span>}
+                            {p.isRecommended && <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[9px] font-black">RECOMMENDED</span>}
                             {!p.isActive && <span className="px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded text-[9px] font-black">INACTIVE</span>}
                           </div>
                           {/* Audience badges on the card */}
@@ -505,23 +574,20 @@ export default function SubPlansPage() {
                           {p.price.toLocaleString()} <span className="text-xs text-gray-400 font-normal">ETB</span>
                         </p>
                       </div>
-                      <div className="px-4 py-3 grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
-                        {([
-                          ['Casting Calls',    p.maxCastingCalls],
-                          ['Audition Reviews', p.maxAuditionReviews],
-                          ['AI Analyses',      p.maxAiScriptAnalyses],
-                          ['Talent Searches',  p.maxTalentSearches],
-                          ['Bookings',         p.maxBookings],
-                          ['Location Scout',   p.maxLocationScouting],
-                        ] as [string, number][]).map(([l, v]) => (
-                          <div key={l} className="flex justify-between">
-                            <span className="text-gray-400">{l}</span>
-                            <span className="font-bold text-gray-700">{v.toLocaleString()}</span>
+                      <div className="px-4 py-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[10px]">
+                        {extractAllQuotas(p).map(({ key, label, value }) => (
+                          <div key={key} className="flex justify-between items-center py-0.5 border-b border-gray-50 last:border-0">
+                            <span className="text-gray-500 font-medium truncate pr-1" title={label}>{label}</span>
+                            <span className="font-bold text-gray-800 bg-gray-50 px-1.5 py-0.5 rounded shrink-0">{value.toLocaleString()}</span>
                           </div>
                         ))}
                       </div>
+                      <div className="px-4 py-1.5 bg-gray-50/60 border-t border-b border-gray-100 flex items-center justify-between text-[9px] text-gray-400">
+                        <span>Duration: <strong className="text-gray-600">{p.durationInDays || 365}d</strong></span>
+                        <span>Sort Order: <strong className="text-gray-600">{p.sortOrder ?? 1}</strong></span>
+                      </div>
                       {p.features.length > 0 && (
-                        <div className="px-4 pb-3 space-y-0.5">
+                        <div className="px-4 py-2.5 space-y-0.5">
                           {p.features.slice(0, 3).map((f, i) => (
                             <p key={i} className="text-[10px] text-gray-500 flex items-center gap-1">
                               <FiCheck className="w-2.5 h-2.5 text-green-500 shrink-0" /> {f}
@@ -756,12 +822,13 @@ export default function SubPlansPage() {
               <div>
                 <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2">Quotas</label>
                 <div className="grid grid-cols-2 gap-2">
-                  <QRow label="Casting Calls"      field="maxCastingCalls"     val={form.maxCastingCalls}     onChange={set} />
-                  <QRow label="Audition Reviews"   field="maxAuditionReviews"  val={form.maxAuditionReviews}  onChange={set} />
-                  <QRow label="AI Script Analyses" field="maxAiScriptAnalyses" val={form.maxAiScriptAnalyses} onChange={set} />
-                  <QRow label="Talent Searches"    field="maxTalentSearches"   val={form.maxTalentSearches}   onChange={set} />
-                  <QRow label="Bookings"           field="maxBookings"         val={form.maxBookings}         onChange={set} />
-                  <QRow label="Location Scouting"  field="maxLocationScouting" val={form.maxLocationScouting} onChange={set} />
+                  <QRow label="Casting Calls"         field="maxCastingCalls"     val={form.maxCastingCalls}     onChange={set} />
+                  <QRow label="Audition Reviews"      field="maxAuditionReviews"  val={form.maxAuditionReviews}  onChange={set} />
+                  <QRow label="AI Script Analyses"    field="maxAiScriptAnalyses" val={form.maxAiScriptAnalyses} onChange={set} />
+                  <QRow label="Talent Searches"       field="maxTalentSearches"   val={form.maxTalentSearches}   onChange={set} />
+                  <QRow label="Bookings"              field="maxBookings"         val={form.maxBookings}         onChange={set} />
+                  <QRow label="Location Scouting"     field="maxLocationScouting" val={form.maxLocationScouting} onChange={set} />
+                  <QRow label="AI Video Generations"  field="maxVideoGenerations" val={form.maxVideoGenerations} onChange={set} />
                 </div>
               </div>
 
@@ -775,8 +842,12 @@ export default function SubPlansPage() {
               </div>
 
               {/* ── Flags ── */}
-              <div className="flex gap-4">
-                {([{ field: 'isActive', label: 'Active' }, { field: 'isPopular', label: 'Popular (highlighted)' }]).map(({ field, label }) => (
+              <div className="flex gap-4 flex-wrap">
+                {([
+                  { field: 'isActive',      label: 'Active' },
+                  { field: 'isPopular',     label: 'Popular (badge)' },
+                  { field: 'isRecommended', label: 'Recommended (badge)' },
+                ]).map(({ field, label }) => (
                   <label key={field} className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox"
                       checked={(form as any)[field]}

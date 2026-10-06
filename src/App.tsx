@@ -21,6 +21,8 @@ const SubUsersPage      = lazy(() => import('@/pages/SubUsersPage'))
 const RoleChangeRequestsPage = lazy(() => import('@/pages/RoleChangeRequestsPage'))
 const LocationsPage     = lazy(() => import('@/pages/LocationsPage'))
 const TrustPage         = lazy(() => import('@/pages/TrustPage'))
+const AvatarLicensesPage = lazy(() => import('@/pages/AvatarLicensesPage'))
+const ReplicaKycPage      = lazy(() => import('@/pages/ReplicaKycPage'))
 
 const Spin = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -44,23 +46,25 @@ function AppRoutes() {
           <PrivateRoute>
             <AdminLayout>
               <Routes>
-                <Route path="/"              element={<DashboardPage />} />
-                <Route path="/users"         element={<UsersPage />} />
-                <Route path="/role-requests" element={<RoleChangeRequestsPage />} />
-                <Route path="/cast-calls"    element={<CastCallsPage />} />
-                <Route path="/productions"   element={<ProductionsPage />} />
-                <Route path="/talents"       element={<TalentsPage />} />
-                <Route path="/agencies"      element={<AgenciesPage />} />
-                <Route path="/companies"     element={<CompaniesPage />} />
-                <Route path="/auditions"     element={<AuditionsPage />} />
-                <Route path="/bookings"      element={<BookingsPage />} />
-                <Route path="/locations"     element={<LocationsPage />} />
-                <Route path="/trust"         element={<TrustPage />} />
-                <Route path="/sub-plans"     element={<SubPlansPage />} />
-                <Route path="/sub-users"     element={<SubUsersPage />} />
-                <Route path="/platform-fees" element={<PlatformFeesPage />} />
-                <Route path="/withdrawals"   element={<WithdrawalsPage />} />
-                <Route path="*"              element={<Navigate to="/" replace />} />
+                <Route path="/"                element={<DashboardPage />} />
+                <Route path="/users"           element={<UsersPage />} />
+                <Route path="/role-requests"   element={<RoleChangeRequestsPage />} />
+                <Route path="/cast-calls"      element={<CastCallsPage />} />
+                <Route path="/productions"     element={<ProductionsPage />} />
+                <Route path="/talents"         element={<TalentsPage />} />
+                <Route path="/agencies"        element={<AgenciesPage />} />
+                <Route path="/companies"       element={<CompaniesPage />} />
+                <Route path="/auditions"       element={<AuditionsPage />} />
+                <Route path="/bookings"        element={<BookingsPage />} />
+                <Route path="/avatar-licenses" element={<AvatarLicensesPage />} />
+                <Route path="/replica-kyc"     element={<ReplicaKycPage />} />
+                <Route path="/locations"       element={<LocationsPage />} />
+                <Route path="/trust"           element={<TrustPage />} />
+                <Route path="/sub-plans"       element={<SubPlansPage />} />
+                <Route path="/sub-users"       element={<SubUsersPage />} />
+                <Route path="/platform-fees"   element={<PlatformFeesPage />} />
+                <Route path="/withdrawals"     element={<WithdrawalsPage />} />
+                <Route path="*"                element={<Navigate to="/" replace />} />
               </Routes>
             </AdminLayout>
           </PrivateRoute>

@@ -70,6 +70,8 @@ interface Usage {
   bookingsLimit: number
   locationScoutingUsed: number
   locationScoutingLimit: number
+  videoGenerationsUsed?: number
+  videoGenerationsLimit?: number
 }
 
 const TYPE_BADGE: Record<string, string> = {
@@ -335,13 +337,14 @@ export default function SubUsersPage() {
 
               {/* Usage bars */}
               {singleUsage && (
-                <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  <UsageBar label="Casting Calls"     used={singleUsage.castingCallsUsed}      limit={singleUsage.castingCallsLimit} />
-                  <UsageBar label="Audition Reviews"  used={singleUsage.auditionReviewsUsed}   limit={singleUsage.auditionReviewsLimit} />
-                  <UsageBar label="AI Script Analyses"used={singleUsage.aiScriptAnalysesUsed}  limit={singleUsage.aiScriptAnalysesLimit} />
-                  <UsageBar label="Talent Searches"   used={singleUsage.talentSearchesUsed}    limit={singleUsage.talentSearchesLimit} />
-                  <UsageBar label="Bookings"          used={singleUsage.bookingsUsed}           limit={singleUsage.bookingsLimit} />
-                  <UsageBar label="Location Scouting" used={singleUsage.locationScoutingUsed}  limit={singleUsage.locationScoutingLimit} />
+                <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  <UsageBar label="Casting Calls"         used={singleUsage.castingCallsUsed}         limit={singleUsage.castingCallsLimit} />
+                  <UsageBar label="Audition Reviews"      used={singleUsage.auditionReviewsUsed}      limit={singleUsage.auditionReviewsLimit} />
+                  <UsageBar label="AI Script Analyses"    used={singleUsage.aiScriptAnalysesUsed}     limit={singleUsage.aiScriptAnalysesLimit} />
+                  <UsageBar label="Talent Searches"       used={singleUsage.talentSearchesUsed}       limit={singleUsage.talentSearchesLimit} />
+                  <UsageBar label="Bookings"              used={singleUsage.bookingsUsed}             limit={singleUsage.bookingsLimit} />
+                  <UsageBar label="Location Scouting"     used={singleUsage.locationScoutingUsed}     limit={singleUsage.locationScoutingLimit} />
+                  <UsageBar label="AI Video Generations"  used={singleUsage.videoGenerationsUsed ?? 0} limit={singleUsage.videoGenerationsLimit ?? 0} />
                 </div>
               )}
             </div>

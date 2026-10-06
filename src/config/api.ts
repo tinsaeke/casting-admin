@@ -177,6 +177,29 @@ export const adminAPI = {
   rejectRoleChangeRequest: (requestId: string, admin_note: string) =>
     request<any>('PATCH', C(`/admin/casting/role-change-requests/${requestId}/reject`), { admin_note }),
 
+  // ── AI Avatar Likeness Licenses ──────────────────────────────────────────────
+  avatarLicenses: (params?: { status?: string; page?: number; limit?: number }) =>
+    request<any>('GET', C('/admin/avatar/licenses', {
+      status: params?.status && params.status !== 'all' ? params.status : undefined,
+      page:   params?.page || 1,
+      limit:  params?.limit || 20,
+    })),
+
+  // ── Digital Replica KYC & Verification ───────────────────────────────────────
+  replicas: (params?: { kyc_status?: string; status?: string; page?: number; limit?: number }) =>
+    request<any>('GET', C('/replica/admin/replicas', {
+      kyc_status: params?.kyc_status && params.kyc_status !== 'all' ? params.kyc_status : undefined,
+      status:     params?.status && params.status !== 'all' ? params.status : undefined,
+      page:       params?.page || 1,
+      limit:      params?.limit || 20,
+    })),
+  approveReplicaKyc: (replicaId: string) =>
+    request<any>('POST', C(`/replica/admin/${replicaId}/kyc/approve`)),
+  rejectReplicaKyc: (replicaId: string, reason: string) =>
+    request<any>('POST', C(`/replica/admin/${replicaId}/kyc/reject`), { reason }),
+  revokeReplica: (replicaId: string, reason: string) =>
+    request<any>('POST', C(`/replica/admin/${replicaId}/revoke`), { reason }),
+
   // ── Account service ───────────────────────────────────────────────────────────
   reports: () =>
     request<any>('GET', `${API.ACCOUNT}/account-report/admin`),
@@ -189,10 +212,16 @@ const COMMISSION_BASE = 'https://commission.besewonline.com/api'
 const CC = (path: string) => `${COMMISSION_BASE}${path}`
 
 export const commissionAPI = {
-  // Platform fee config
+  // Platform booking fee config
   getFees: () =>
     request<any>('GET', CC('/commission/admin/platform-config/booking-fees')),
   updateFees: (body: { direct_rate: number; agency_self_rate: number; agency_mediated_rate: number; agency_commission_rate: number }) =>
+    request<any>('PUT', CC('/commission/admin/platform-config/booking-fees'), body),
+
+  // Platform avatar fee config
+  getAvatarFees: () =>
+    request<any>('GET', CC('/commission/admin/platform-config/avatar-fees')),
+  updateAvatarFees: (body: { avatar_platform_rate?: number; avatar_actor_rate?: number; [k: string]: any }) =>
     request<any>('PUT', CC('/commission/admin/platform-config/booking-fees'), body),
 
   // Withdrawals
