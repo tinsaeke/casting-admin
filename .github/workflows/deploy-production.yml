@@ -1,0 +1,154 @@
+name: Deploy Casting Admin to Production
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:
+
+env:
+  JUMPHOST_IP: "196.188.240.111"
+  JUMPHOST_PORT: "250"
+  JUMPHOST_USER: "devteam"
+  JUMPHOST_PASSWORD: "DevTeam@Besew2026#Stg"
+  DEPLOYMENT_PATH: "/mnt/data/srv_besew/frontend/casting-admin"
+  SERVICE_NAME: "besew-casting-admin"
+  CONTAINER_PORT: "3021"
+  DOMAIN: "admin.cast.besewonline.com"
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+    concurrency:
+      group: casting-admin-production
+      cancel-in-progress: true
+    env:
+      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Free Disk Space
+        run: |
+          npm cache clean --force || true
+          rm -rf /tmp/casting-admin-*.tar.gz /tmp/npm-* || true
+          rm -rf node_modules/.cache || true
+
+      - name: Install dependencies
+        run: |
+          export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/node/bin:/home/devteam/.nvm/versions/node/$(ls /home/devteam/.nvm/versions/node/ 2>/dev/null | tail -1)/bin
+          npm install --legacy-peer-deps --no-audit --prefer-offline
+
+      - name: Rebuild native modules
+        run: |
+          export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/node/bin:/home/devteam/.nvm/versions/node/$(ls /home/devteam/.nvm/versions/node/ 2>/dev/null | tail -1)/bin
+          npm rebuild
+          npm install @rollup/rollup-linux-x64-gnu --save-optional
+
+      - name: Build React application (Vite)
+        run: |
+          export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/node/bin:/home/devteam/.nvm/versions/node/$(ls /home/devteam/.nvm/versions/node/ 2>/dev/null | tail -1)/bin
+          npm run build
+
+      - name: Create deployment package
+        run: |
+          mkdir -p deployment-package
+          cp -r dist deployment-package/
+          cp Dockerfile deployment-package/
+          cp nginx.conf deployment-package/
+          tar -czf /tmp/casting-admin-prod.tar.gz -C deployment-package .
+          mv /tmp/casting-admin-prod.tar.gz ./casting-admin.tar.gz
+          ls -lh casting-admin.tar.gz
+
+      - name: Transfer to server
+        run: |
+          sshpass -p "${{ env.JUMPHOST_PASSWORD }}" scp -P ${{ env.JUMPHOST_PORT }} -o StrictHostKeyChecking=no \
+            casting-admin.tar.gz \
+            ${{ env.JUMPHOST_USER }}@${{ env.JUMPHOST_IP }}:/tmp/casting-admin.tar.gz
+          if [ $? -ne 0 ]; then
+            echo "ERROR: Failed to transfer archive to server"
+            exit 1
+          fi
+          echo "Archive transferred successfully"
+
+      - name: Extract and setup on server
+        run: |
+          sshpass -p "${{ env.JUMPHOST_PASSWORD }}" ssh -p ${{ env.JUMPHOST_PORT }} -o StrictHostKeyChecking=no \
+            ${{ env.JUMPHOST_USER }}@${{ env.JUMPHOST_IP }} "
+            if [ ! -f /tmp/casting-admin.tar.gz ]; then
+              echo 'ERROR: Archive not found at /tmp/casting-admin.tar.gz'
+              exit 1
+            fi
+            echo 'Archive found, proceeding with extraction...'
+            echo 'DevTeam@Besew2026#Stg' | sudo -S bash -c '
+              mkdir -p ${{ env.DEPLOYMENT_PATH }} && \
+              chown devteam:devteam ${{ env.DEPLOYMENT_PATH }}
+            '
+            rm -rf ${{ env.DEPLOYMENT_PATH }}/*
+            cd ${{ env.DEPLOYMENT_PATH }}
+            tar -xzf /tmp/casting-admin.tar.gz
+            rm /tmp/casting-admin.tar.gz
+            echo 'Extraction complete.'
+          "
+
+      - name: Build Docker image
+        run: |
+          sshpass -p "${{ env.JUMPHOST_PASSWORD }}" ssh -p ${{ env.JUMPHOST_PORT }} -o StrictHostKeyChecking=no \
+            ${{ env.JUMPHOST_USER }}@${{ env.JUMPHOST_IP }} "
+            echo 'DevTeam@Besew2026#Stg' | sudo -S bash -c '
+              cd ${{ env.DEPLOYMENT_PATH }} && \
+              docker stop ${{ env.SERVICE_NAME }} 2>/dev/null || true && \
+              docker rm -f ${{ env.SERVICE_NAME }} 2>/dev/null || true && \
+              docker rmi ${{ env.SERVICE_NAME }}:latest 2>/dev/null || true && \
+              docker build --no-cache -t ${{ env.SERVICE_NAME }}:latest . && \
+              echo Docker image built successfully
+            '
+          "
+
+      - name: Deploy container
+        run: |
+          sshpass -p "${{ env.JUMPHOST_PASSWORD }}" ssh -p ${{ env.JUMPHOST_PORT }} -o StrictHostKeyChecking=no \
+            ${{ env.JUMPHOST_USER }}@${{ env.JUMPHOST_IP }} "
+            echo 'DevTeam@Besew2026#Stg' | sudo -S bash -c '
+              docker stop ${{ env.SERVICE_NAME }} 2>/dev/null || true && \
+              docker rm -f ${{ env.SERVICE_NAME }} 2>/dev/null || true && \
+              sleep 2 && \
+              OCCUPYING=\$(docker ps -q --filter publish=${{ env.CONTAINER_PORT }}) && \
+              if [ -n \"\$OCCUPYING\" ]; then
+                echo \"Port ${{ env.CONTAINER_PORT }} still occupied by \$OCCUPYING — force removing...\" && \
+                docker rm -f \$OCCUPYING 2>/dev/null || true && \
+                sleep 2
+              fi && \
+              docker network inspect backend_besew-network >/dev/null 2>&1 || docker network create backend_besew-network && \
+              docker run -d \
+                --name ${{ env.SERVICE_NAME }} \
+                --network backend_besew-network \
+                -p 127.0.0.1:${{ env.CONTAINER_PORT }}:80 \
+                --restart unless-stopped \
+                ${{ env.SERVICE_NAME }}:latest && \
+              sleep 5 && \
+              docker ps --filter name=${{ env.SERVICE_NAME }} && \
+              docker logs ${{ env.SERVICE_NAME }} --tail=10
+            '
+          "
+
+      - name: Verify deployment
+        run: |
+          sshpass -p "${{ env.JUMPHOST_PASSWORD }}" ssh -p ${{ env.JUMPHOST_PORT }} -o StrictHostKeyChecking=no \
+            ${{ env.JUMPHOST_USER }}@${{ env.JUMPHOST_IP }} "
+            echo 'DevTeam@Besew2026#Stg' | sudo -S bash -c '
+              docker ps --filter name=${{ env.SERVICE_NAME }} --filter status=running
+              RUNNING=\$(docker ps --filter name=${{ env.SERVICE_NAME }} --filter status=running -q)
+              if [ -z \"\$RUNNING\" ]; then
+                echo ERROR: Container is not running!
+                docker logs ${{ env.SERVICE_NAME }} --tail=20
+                exit 1
+              fi
+              echo SUCCESS: Container is running.
+              curl -sf http://localhost:${{ env.CONTAINER_PORT }}/ -o /dev/null && echo HTTP check: OK || echo HTTP check: No response
+            '
+          "
