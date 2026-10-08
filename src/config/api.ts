@@ -177,13 +177,33 @@ export const adminAPI = {
   rejectRoleChangeRequest: (requestId: string, admin_note: string) =>
     request<any>('PATCH', C(`/admin/casting/role-change-requests/${requestId}/reject`), { admin_note }),
 
-  // ── AI Avatar Likeness Licenses ──────────────────────────────────────────────
+  // ── AI Digital Replica Likeness Licenses ─────────────────────────────────────
   avatarLicenses: (params?: { status?: string; page?: number; limit?: number }) =>
     request<any>('GET', C('/admin/avatar/licenses', {
       status: params?.status && params.status !== 'all' ? params.status : undefined,
       page:   params?.page || 1,
       limit:  params?.limit || 20,
     })),
+  replicaLicenses: async (params?: { status?: string; page?: number; limit?: number }) => {
+    try {
+      return await request<any>('GET', C('/replica-licenses/admin/licenses', {
+        status: params?.status && params.status !== 'all' ? params.status : undefined,
+        page:   params?.page || 1,
+        limit:  params?.limit || 20,
+      }))
+    } catch (e: any) {
+      // Fallback to avatar licenses endpoint if needed
+      return await request<any>('GET', C('/admin/avatar/licenses', {
+        status: params?.status && params.status !== 'all' ? params.status : undefined,
+        page:   params?.page || 1,
+        limit:  params?.limit || 20,
+      }))
+    }
+  },
+  licenseAuditLog: (licenseId: string) =>
+    request<any>('GET', C(`/replica-licenses/admin/licenses/${encodeURIComponent(licenseId)}/audit`)),
+  expireOverdueApprovals: () =>
+    request<any>('POST', C('/replica-licenses/admin/expire-approvals')),
 
   // ── Digital Replica KYC & Verification ───────────────────────────────────────
   replicas: (params?: { kyc_status?: string; status?: string; page?: number; limit?: number }) =>
@@ -242,3 +262,69 @@ export const commissionAPI = {
   getTransactions: (partyId: string, page = 1, limit = 20) =>
     request<any>('GET', `${CC(`/commission/admin/wallet/party/${partyId}/transactions`)}?page=${page}&limit=${limit}`),
 }
+
+// ── Casting Menu Configuration (Account Service) ───────────────────────────────
+export interface MenuConfigItem {
+  _id?: string
+  menuId: string
+  label: string
+  path: string
+  icon?: string
+  isActive: boolean
+  order?: number
+  platform: 'casting' | string
+  allowedUserTypes?: string[]
+  allowedWorkerTypes?: string[]
+  allowedSubscriptionTiers?: string[]
+  minTrustScore?: number
+  badge?: string | null
+  translations?: {
+    am?: string
+    en?: string
+    [k: string]: string | undefined
+  }
+  createdAt?: string
+  updatedAt?: string
+}
+
+export const menuConfigAPI = {
+  // Get all casting menus
+  getCastingMenus: (platform = 'casting') =>
+    request<any>('GET', `${API.ACCOUNT}/api/v1/menu-config?platform=${encodeURIComponent(platform)}`),
+
+  // Create menu item
+  createMenu: (menu: Partial<MenuConfigItem>) =>
+    request<any>('POST', `${API.ACCOUNT}/api/v1/menu-config`, {
+      platform: 'casting',
+      ...menu,
+    }),
+
+  // Update single menu item
+  updateMenu: (menuId: string, updates: Partial<MenuConfigItem>) =>
+    request<any>('PUT', `${API.ACCOUNT}/api/v1/menu-config/${encodeURIComponent(menuId)}`, updates),
+
+  // Toggle active status
+  toggleActive: (menuId: string, isActive: boolean) =>
+    request<any>('PUT', `${API.ACCOUNT}/api/v1/menu-config/${encodeURIComponent(menuId)}`, { isActive }),
+
+  // Set badge
+  setBadge: (menuId: string, badge: string | null) =>
+    request<any>('PUT', `${API.ACCOUNT}/api/v1/menu-config/${encodeURIComponent(menuId)}`, { badge }),
+
+  // Set allowed user types
+  setUserTypes: (menuId: string, allowedUserTypes: string[]) =>
+    request<any>('PUT', `${API.ACCOUNT}/api/v1/menu-config/${encodeURIComponent(menuId)}`, { allowedUserTypes }),
+
+  // Set allowed subscription tiers
+  setSubscriptionTiers: (menuId: string, allowedSubscriptionTiers: string[]) =>
+    request<any>('PUT', `${API.ACCOUNT}/api/v1/menu-config/${encodeURIComponent(menuId)}`, { allowedSubscriptionTiers }),
+
+  // Delete menu item
+  deleteMenu: (menuId: string) =>
+    request<any>('DELETE', `${API.ACCOUNT}/api/v1/menu-config/${encodeURIComponent(menuId)}`),
+
+  // Bulk update
+  bulkUpdate: (updates: Array<Partial<MenuConfigItem> & { menuId: string }>) =>
+    request<any>('POST', `${API.ACCOUNT}/api/v1/menu-config/bulk-update`, updates),
+}
+

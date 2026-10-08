@@ -21,6 +21,7 @@ const NAV = [
   { path: '/bookings',        label: 'Bookings',          icon: FiBookmark },
   { path: '/avatar-licenses', label: 'Avatar Licenses',   icon: FiCpu },
   { path: '/replica-kyc',     label: 'Replica KYC',       icon: FiShield },
+  { path: '/menu-config',     label: 'Menu Config',       icon: FiSliders },
   { path: '/locations',       label: 'Locations',         icon: FiMapPin },
   { path: '/trust',           label: 'Trust & Reports',   icon: FiShield },
   { path: '/sub-plans',       label: 'Sub Plans',         icon: FiPackage },

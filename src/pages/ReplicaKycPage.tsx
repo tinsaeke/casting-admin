@@ -14,12 +14,17 @@ export interface DigitalReplicaItem {
   replica_id: string
   talent_id?: string
   party_id?: string
+  actor_party_id?: string
   display_name: string
   bio?: string
-  status: 'draft' | 'pending_kyc' | 'active' | 'suspended' | 'revoked' | string
+  status: 'draft' | 'pending' | 'pending_kyc' | 'active' | 'suspended' | 'revoked' | string
   kyc_status: 'unverified' | 'pending' | 'verified' | 'rejected' | string
   kyc_method?: 'national_id' | 'passport' | 'driving_license' | 'liveness_capture' | string
+  kyc_submitted_at?: string
   kyc_document_ref?: string
+  kyc_rejection_reason?: string
+  rejection_reason?: string
+  revocation_reason?: string
   consent_version?: string
   consent_text_hash?: string
   consent_hash?: string
@@ -35,6 +40,12 @@ export interface DigitalReplicaItem {
   products?: string[]
   pricing_model?: string
   per_project_etb?: number
+  asset_readiness?: {
+    readiness_score?: number
+    face_photo_count?: number
+    voice_sample_count?: number
+  }
+  total_licenses_issued?: number
   allowed_uses?: string[]
   forbidden_uses?: string[]
   forbidden_products?: string[]
@@ -48,8 +59,7 @@ export interface DigitalReplicaItem {
   headshot_url?: string
   voice_sample_url?: string
   photo_urls?: string[]
-  rejection_reason?: string
-  revocation_reason?: string
+  activated_at?: string
   created_at?: string
   createdAt?: string
   updated_at?: string
@@ -65,6 +75,7 @@ const KYC_STATUS_BADGE: Record<string, string> = {
 
 const REPLICA_STATUS_BADGE: Record<string, string> = {
   active:      'bg-green-100 text-green-700 border-green-200',
+  pending:     'bg-yellow-100 text-yellow-800 border-yellow-200',
   pending_kyc: 'bg-yellow-100 text-yellow-800 border-yellow-200',
   draft:       'bg-gray-100 text-gray-600 border-gray-200',
   suspended:   'bg-orange-100 text-orange-700 border-orange-200',
@@ -120,7 +131,7 @@ export default function ReplicaKycPage() {
         page,
         limit,
       })
-      const list = res?.replicas || res?.data || (Array.isArray(res) ? res : [])
+      const list = res?.data || res?.replicas || (Array.isArray(res) ? res : [])
       const totalCount = res?.total ?? (Array.isArray(res) ? res.length : list.length)
       setReplicas(list)
       setTotal(totalCount)
@@ -142,6 +153,7 @@ export default function ReplicaKycPage() {
     return (
       r.display_name?.toLowerCase().includes(q) ||
       r.replica_id?.toLowerCase().includes(q) ||
+      r.actor_party_id?.toLowerCase().includes(q) ||
       r.party_id?.toLowerCase().includes(q) ||
       r.kyc_document_ref?.toLowerCase().includes(q) ||
       r.bio?.toLowerCase().includes(q)
@@ -159,7 +171,7 @@ export default function ReplicaKycPage() {
     setError(''); setSuccess('')
     try {
       await adminAPI.approveReplicaKyc(replica.replica_id)
-      setSuccess(`Replica "${replica.display_name}" KYC verified & activated successfully!`)
+      setSuccess(`Replica "${replica.display_name}" KYC verified & activated successfully! Visible in marketplace.`)
       if (selectedReplica?.replica_id === replica.replica_id) {
         setSelectedReplica(null)
       }
@@ -180,8 +192,8 @@ export default function ReplicaKycPage() {
     setActionLoading(rejectingItem.replica_id)
     setError(''); setSuccess('')
     try {
-      await adminAPI.rejectReplicaKyc(rejectingItem.replica_id, rejectReason.trim())
-      setSuccess(`Replica "${rejectingItem.display_name}" KYC rejected.`)
+      const res = await adminAPI.rejectReplicaKyc(rejectingItem.replica_id, rejectReason.trim())
+      setSuccess(res?.kyc_rejection_reason ? `Replica "${rejectingItem.display_name}" rejected: ${res.kyc_rejection_reason}` : `Replica "${rejectingItem.display_name}" KYC rejected.`)
       setRejectingItem(null)
       setRejectReason('')
       if (selectedReplica?.replica_id === rejectingItem.replica_id) {
@@ -204,8 +216,8 @@ export default function ReplicaKycPage() {
     setActionLoading(revokingItem.replica_id)
     setError(''); setSuccess('')
     try {
-      await adminAPI.revokeReplica(revokingItem.replica_id, revokeReason.trim())
-      setSuccess(`Replica "${revokingItem.display_name}" has been revoked platform-wide.`)
+      const res = await adminAPI.revokeReplica(revokingItem.replica_id, revokeReason.trim())
+      setSuccess(res?.message || `Replica "${revokingItem.display_name}" has been revoked platform-wide.`)
       setRevokingItem(null)
       setRevokeReason('')
       if (selectedReplica?.replica_id === revokingItem.replica_id) {
