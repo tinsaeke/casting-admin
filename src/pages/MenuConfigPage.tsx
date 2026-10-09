@@ -33,7 +33,7 @@ const SUBSCRIPTION_TIERS = [
   { id: 'vip',          label: 'VIP' },
 ]
 
-// ── Complete 59-Item Standard Casting Menu Catalogue ───────────────────────────
+// ── Complete Standard Casting Menu Catalogue (10 Roles + Public) ───────────────────────────
 export const ALL_59_CASTING_MENUS: Array<{
   menuId: string
   path: string
@@ -45,103 +45,127 @@ export const ALL_59_CASTING_MENUS: Array<{
   description: string
   isContainer?: boolean
 }> = [
-  // ── Public / Common (Everyone) ──
-  { menuId: 'casting-calls',            path: '/casting',                       label: 'Casting Calls',           icon: '🎬', allowedUserTypes: [], order: 10,  description: 'Public open casting notices' },
-  { menuId: 'casting-talent-browse',     path: '/casting/talent-search',          label: 'Browse Talents',          icon: '👥', allowedUserTypes: [], order: 20,  description: 'Public talent discovery' },
+  // ── Public / Common ──
+  { menuId: 'casting-calls',            path: '/casting',                       label: 'Casting Calls',           icon: '🎬', allowedUserTypes: ['talent', 'agency', 'cast_agency', 'production_crew', 'aggregator_scout', 'academy'], order: 10,  description: 'Public open casting notices' },
+  { menuId: 'casting-talent-browse',     path: '/casting/talent-search',          label: 'Browse Talents',          icon: '👥', allowedUserTypes: [], order: 20,  description: 'Public talent discovery (Guest only)' },
   { menuId: 'casting-studios',          path: '/casting/studios',                label: 'Studios',                 icon: '🎥', allowedUserTypes: [], order: 30,  description: 'Production studios directory' },
-  { menuId: 'casting-academies',        path: '/casting/academies',              label: 'Academies',               icon: '🏫', allowedUserTypes: [], order: 40,  description: 'Acting & film academies' },
+  { menuId: 'casting-academies',        path: '/casting/academies',              label: 'Academies',               icon: '🏫', allowedUserTypes: ['academy'], order: 40,  description: 'Acting & film academies' },
   { menuId: 'casting-agencies',         path: '/casting/agencies',               label: 'Agencies',                icon: '🏢', allowedUserTypes: [], order: 45,  description: 'Talent representation agencies' },
-  { menuId: 'casting-locations',        path: '/casting/locations',              label: 'Locations',               icon: '📍', allowedUserTypes: [], order: 50,  description: 'Filming locations catalog' },
-  { menuId: 'replicas-marketplace',     path: '/casting/avatars',                label: 'AI Replica Marketplace',  icon: '🤖', allowedUserTypes: [], order: 60,  description: 'Digital replica likeness licensing' },
-  { menuId: 'career-coach-hub',         path: '/career-coach',                   label: 'Career Intelligence',     icon: '💡', allowedUserTypes: [], order: 70,  description: 'AI Career Coach Hub' },
-  { menuId: 'career-coach-goals',       path: '/career-coach/goals',             label: 'Career Goals',            icon: '🎯', allowedUserTypes: [], order: 80,  description: 'Career goal tracking' },
-  { menuId: 'casting-invitations',      path: '/casting/invitations',            label: 'Global Invitations',      icon: '📬', allowedUserTypes: ['talent', 'employer', 'agency', 'cast_agency', 'academy', 'studio_provider'], order: 90, description: 'Audition invitations gateway' },
+  { menuId: 'casting-locations',        path: '/casting/locations',              label: 'Locations',               icon: '📍', allowedUserTypes: ['talent', 'agency', 'cast_agency', 'location_scout', 'aggregator_scout', 'production_crew', 'academy'], order: 50,  description: 'Filming locations catalog' },
+  { menuId: 'replicas-marketplace',     path: '/casting/avatars',                label: 'AI Replica Marketplace',  icon: '🤖', allowedUserTypes: ['production_crew'], order: 60,  description: 'Digital replica likeness licensing' },
+  { menuId: 'casting-invitations',      path: '/casting/invitations',            label: 'Invitations',             icon: '📬', allowedUserTypes: ['academy'], order: 90, description: 'Audition invitations gateway' },
 
-  // ── Talent / Actor Role ──
+  // ── Common Career Coach Group ──
+  { menuId: 'career-coach-group',       path: '',                                label: 'Career Coach',            icon: '💡', allowedUserTypes: ['talent', 'employer', 'content_creator', 'agency', 'cast_agency', 'location_scout', 'aggregator_scout', 'production_crew', 'academy', 'studio_provider'], order: 900, description: 'Career Coach dropdown container', isContainer: true },
+  { menuId: 'career-coach-hub',         path: '/career-coach',                   label: 'Career Intelligence',     icon: '💡', parentMenuId: 'career-coach-group', allowedUserTypes: ['talent', 'employer', 'content_creator', 'agency', 'cast_agency', 'location_scout', 'aggregator_scout', 'production_crew', 'academy', 'studio_provider'], order: 901, description: 'AI Career Coach Hub' },
+  { menuId: 'career-coach-goals',       path: '/career-coach/goals',             label: 'Career Goals',            icon: '🎯', parentMenuId: 'career-coach-group', allowedUserTypes: ['talent', 'employer', 'content_creator', 'agency', 'cast_agency', 'location_scout', 'aggregator_scout', 'production_crew', 'academy', 'studio_provider'], order: 902, description: 'Career goal tracking' },
+
+  // ── 1. Talent / Actor Role ──
   { menuId: 'talent-dashboard',         path: '/casting/talent-dashboard',       label: 'Talent Dashboard',        icon: '📊', allowedUserTypes: ['talent'], order: 100, description: 'Talent personal workspace' },
   
   // Talent: Services Group
-  { menuId: 'talent-services',          path: '',                                label: 'Services',                icon: '⭐', allowedUserTypes: ['talent'], order: 105, description: 'Talent services dropdown container', isContainer: true },
-  { menuId: 'talent-auditions',         path: '/casting/auditions',              label: 'My Auditions',            icon: '📹', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 110, description: 'Submitted auditions & callbacks' },
-  { menuId: 'talent-bookings',          path: '/casting/bookings',               label: 'My Bookings',             icon: '📑', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 120, description: 'Contracted bookings & dates' },
-  { menuId: 'talent-invitations',       path: '/casting/invitations',            label: 'Invitations',             icon: '✉️', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 130, description: 'Direct casting invitations' },
-  { menuId: 'talent-call-sheets',       path: '/casting/call-sheets',            label: 'Call Sheets',             icon: '📋', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 140, description: 'Production shooting schedules' },
-  { menuId: 'talent-wallet',            path: '/casting/wallet',                 label: 'Talent Wallet',           icon: '💳', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 150, description: 'Talent earnings & royalties' },
-  { menuId: 'talent-practice-studio',   path: '/casting/talent-dashboard?tab=rehearsal', label: 'Practice Studio', icon: '🎭', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 160, description: 'AI teleprompter & rehearsal' },
-  { menuId: 'talent-my-replica',        path: '/casting/talent-dashboard?tab=avatar',    label: 'My AI Replica & Likeness', icon: '✨', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 170, description: 'Digital likeness & avatar studio' },
+  { menuId: 'talent-services',          path: '',                                label: 'Services',                icon: '⭐', allowedUserTypes: ['talent'], order: 110, description: 'Talent services dropdown container', isContainer: true },
+  { menuId: 'talent-auditions',         path: '/casting/auditions',              label: 'My Auditions',            icon: '📹', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 111, description: 'Submitted auditions & callbacks' },
+  { menuId: 'talent-bookings',          path: '/casting/bookings',               label: 'My Bookings',             icon: '📑', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 112, description: 'Contracted bookings & dates' },
+  { menuId: 'talent-invitations',       path: '/casting/invitations',            label: 'Invitations',             icon: '✉️', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 113, description: 'Direct casting invitations' },
+  { menuId: 'talent-call-sheets',       path: '/casting/call-sheets',            label: 'Call Sheets',             icon: '📋', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 114, description: 'Production shooting schedules' },
+  { menuId: 'talent-wallet',            path: '/casting/wallet',                 label: 'Talent Wallet',           icon: '💳', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 115, description: 'Talent earnings & royalties' },
+  { menuId: 'talent-practice-studio',   path: '/casting/talent-dashboard?tab=rehearsal', label: 'Practice Studio', icon: '🎭', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 116, description: 'AI teleprompter & rehearsal' },
+  { menuId: 'talent-my-replica',        path: '/casting/talent-dashboard?tab=avatar',    label: 'My AI Replica & Likeness', icon: '✨', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 117, description: 'Digital likeness & avatar studio' },
 
   // Talent: Assessments Group
-  { menuId: 'talent-assessments-group', path: '',                                label: 'Assessments',             icon: '🧠', allowedUserTypes: ['talent'], order: 175, description: 'Talent psychometric assessments container', isContainer: true },
-  { menuId: 'talent-assessments',       path: '/talent/assessments',             label: 'Assessments Hub',         icon: '🧠', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 180, description: 'Assessments overview' },
-  { menuId: 'talent-enneagram',         path: '/talent/assessments/enneagram/start', label: 'Enneagram Personality', icon: '🔢', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 185, description: 'Enneagram behavioral test' },
-  { menuId: 'talent-archetypes',        path: '/talent/assessments/archetype/start', label: '12 Archetypes Energy', icon: '🎭', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 190, description: 'Character archetypes test' },
-  { menuId: 'talent-assessment-results',path: '/talent/assessments/enneagram/results', label: 'Assessment Results', icon: '📈', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 195, description: 'Talent scorecard & insights' },
+  { menuId: 'talent-assessments-group', path: '',                                label: 'Assessments',             icon: '🧠', allowedUserTypes: ['talent'], order: 120, description: 'Talent psychometric assessments container', isContainer: true },
+  { menuId: 'talent-assessments',       path: '/talent/assessments',             label: 'Assessments Hub',         icon: '🧠', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 121, description: 'Assessments overview' },
+  { menuId: 'talent-enneagram',         path: '/talent/assessments/enneagram/start', label: 'Enneagram Personality', icon: '🔢', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 122, description: 'Enneagram behavioral test' },
+  { menuId: 'talent-archetypes',        path: '/talent/assessments/archetype/start', label: '12 Archetypes Energy', icon: '🎭', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 123, description: 'Character archetypes test' },
+  { menuId: 'talent-assessment-results',path: '/talent/assessments/enneagram/results', label: 'Assessment Results', icon: '📈', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 124, description: 'Talent scorecard & insights' },
 
-  // Talent: Career Coach Group
-  { menuId: 'talent-career-coach',      path: '',                                label: 'Career Coach',            icon: '💡', allowedUserTypes: ['talent'], order: 196, description: 'Talent coach dropdown container', isContainer: true },
-  { menuId: 'talent-coach-hub',         path: '/career-coach',                   label: 'Career Intelligence',     icon: '💡', parentMenuId: 'talent-career-coach', allowedUserTypes: ['talent'], order: 197, description: 'Career strategy AI' },
-  { menuId: 'talent-coach-goals',       path: '/career-coach/goals',             label: 'Career Goals',            icon: '🎯', parentMenuId: 'talent-career-coach', allowedUserTypes: ['talent'], order: 198, description: 'Milestones & action steps' },
-
-  // ── Employer / Producer / Director / Content Creator Role ──
-  { menuId: 'employer-dashboard',       path: '/casting/employer',               label: 'Employer Dashboard',      icon: '🏢', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 200, description: 'Employer management workspace' },
+  // ── 2. Employer & Content Creator Role ──
+  { menuId: 'employer-dashboard',       path: '/casting/employer',               label: 'Casting Dashboard',       icon: '🏢', allowedUserTypes: ['employer', 'content_creator'], order: 200, description: 'Employer management workspace' },
 
   // Employer: My Work Group
-  { menuId: 'employer-my-work',         path: '',                                label: 'My Work',                 icon: '💼', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 205, description: 'Employer work dropdown container', isContainer: true },
-  { menuId: 'employer-auditions',       path: '/casting/auditions',              label: 'Review Auditions',        icon: '🎞️', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 210, description: 'Review audition tape submissions' },
-  { menuId: 'employer-bookings',        path: '/casting/bookings',               label: 'Manage Bookings',         icon: '🤝', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 220, description: 'Cast booking contracts' },
-  { menuId: 'employer-invitations',     path: '/casting/invitations',            label: 'Sent Invitations',        icon: '✉️', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 225, description: 'Direct audition requests' },
-  { menuId: 'employer-my-talents',      path: '/casting/my-talents',             label: 'Roster / My Talents',     icon: '⭐', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider'], order: 230, description: 'Saved talent rosters' },
-  { menuId: 'employer-talent-search',   path: '/casting/talent-search',          label: 'Talent Scout Engine',     icon: '🔍', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider', 'content_creator'], order: 240, description: 'Advanced talent search' },
-  { menuId: 'employer-call-sheets',     path: '/casting/call-sheets',            label: 'Create Call Sheets',      icon: '📝', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider'], order: 250, description: 'Daily production shooting schedules' },
+  { menuId: 'employer-my-work',         path: '',                                label: 'My Work',                 icon: '💼', allowedUserTypes: ['employer', 'content_creator'], order: 210, description: 'Employer work dropdown container', isContainer: true },
+  { menuId: 'employer-auditions',       path: '/casting/auditions',              label: 'Review Auditions',        icon: '🎞️', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'content_creator'], order: 211, description: 'Review audition tape submissions' },
+  { menuId: 'employer-bookings',        path: '/casting/bookings',               label: 'Manage Bookings',         icon: '🤝', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'content_creator'], order: 212, description: 'Cast booking contracts' },
+  { menuId: 'employer-invitations',     path: '/casting/invitations',            label: 'Sent Invitations',        icon: '✉️', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'content_creator'], order: 213, description: 'Direct audition requests' },
+  { menuId: 'employer-my-talents',      path: '/casting/my-talents',             label: 'My Talents / Roster',     icon: '⭐', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'content_creator'], order: 214, description: 'Saved talent rosters' },
+  { menuId: 'employer-talent-search',   path: '/casting/talent-search',          label: 'Talent Search',           icon: '🔍', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'content_creator'], order: 215, description: 'Advanced talent search' },
+  { menuId: 'employer-call-sheets',     path: '/casting/call-sheets',            label: 'Create Call Sheets',      icon: '📝', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'content_creator'], order: 216, description: 'Daily production shooting schedules' },
 
   // Employer: Discover Group
-  { menuId: 'employer-discover',        path: '',                                label: 'Discover',                icon: '🌐', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 255, description: 'Discovery dropdown container', isContainer: true },
-  { menuId: 'employer-digital-replicas',path: '/casting/avatars',                label: 'AI Digital Avatars',      icon: '🤖', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 256, description: 'AI avatar marketplace for producers' },
-  { menuId: 'replicas-my-licenses',     path: '/casting/avatars',                label: 'Purchased Licenses',      icon: '📜', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider', 'content_creator'], order: 257, description: 'Licensed replica assets' },
-  { menuId: 'employer-locations',       path: '/casting/locations',              label: 'Film Locations',          icon: '📍', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 258, description: 'Scout filming venues' },
-  { menuId: 'employer-studios',         path: '/casting/studios',                label: 'Production Studios',      icon: '🎥', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 259, description: 'Book soundstages & gear' },
-  { menuId: 'employer-academies',       path: '/casting/academies',              label: 'Acting Academies',        icon: '🏫', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 260, description: 'Discover academy students' },
+  { menuId: 'employer-discover',        path: '',                                label: 'Discover',                icon: '🌐', allowedUserTypes: ['employer', 'content_creator'], order: 220, description: 'Discovery dropdown container', isContainer: true },
+  { menuId: 'employer-digital-replicas',path: '/casting/avatars',                label: 'AI Digital Avatars',      icon: '🤖', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'content_creator'], order: 221, description: 'AI avatar marketplace for producers' },
+  { menuId: 'employer-locations',       path: '/casting/locations',              label: 'Film Locations',          icon: '📍', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'content_creator'], order: 222, description: 'Scout filming venues' },
+  { menuId: 'employer-studios',         path: '/casting/studios',                label: 'Production Studios',      icon: '🎥', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'content_creator'], order: 223, description: 'Book soundstages & gear' },
+  { menuId: 'employer-academies',       path: '/casting/academies',              label: 'Acting Academies',        icon: '🏫', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'content_creator'], order: 224, description: 'Discover academy students' },
 
   // Employer: AI Tools Group
-  { menuId: 'employer-ai-tools',        path: '',                                label: 'AI Tools',                icon: '⚡', allowedUserTypes: ['employer', 'agency', 'studio_provider', 'content_creator'], order: 265, description: 'AI tools dropdown container', isContainer: true },
-  { menuId: 'employer-productions',     path: '/casting/productions',            label: 'Productions',             icon: '🎬', parentMenuId: 'employer-ai-tools', allowedUserTypes: ['employer', 'agency', 'studio_provider', 'content_creator'], order: 270, description: 'Film & project management' },
-  { menuId: 'employer-crew-organizer',  path: '/casting/screenplays/crew-org',   label: 'Crew Organizer',          icon: '🎛️', parentMenuId: 'employer-ai-tools', allowedUserTypes: ['employer', 'agency', 'studio_provider'], order: 275, description: 'AI script breakdown & crew planner' },
+  { menuId: 'employer-ai-tools',        path: '',                                label: 'AI Tools',                icon: '⚡', allowedUserTypes: ['employer', 'content_creator'], order: 230, description: 'AI tools dropdown container', isContainer: true },
+  { menuId: 'employer-productions',     path: '/casting/productions',            label: 'Productions',             icon: '🎬', parentMenuId: 'employer-ai-tools', allowedUserTypes: ['employer', 'content_creator'], order: 231, description: 'Film & project management' },
+  { menuId: 'employer-crew-organizer',  path: '/casting/screenplays/crew-org',   label: 'Crew Organizer',          icon: '🎛️', parentMenuId: 'employer-ai-tools', allowedUserTypes: ['employer', 'content_creator'], order: 232, description: 'AI script breakdown & crew planner' },
 
-  // Employer: Career Coach Group
-  { menuId: 'employer-career-coach',    path: '',                                label: 'Career Coach',            icon: '💡', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 280, description: 'Producer career coach dropdown container', isContainer: true },
-  { menuId: 'employer-coach-hub',       path: '/career-coach',                   label: 'Career Intelligence',     icon: '💡', parentMenuId: 'employer-career-coach', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 285, description: 'Executive career coaching' },
-  { menuId: 'employer-coach-goals',     path: '/career-coach/goals',             label: 'Career Goals',            icon: '🎯', parentMenuId: 'employer-career-coach', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 290, description: 'Strategic milestones' },
-
-  // ── Agency / Cast Agency Role ──
+  // ── 3. Agency & Cast Agency Role ──
   { menuId: 'agency-dashboard',         path: '/casting/agency/dashboard',       label: 'Agency Dashboard',        icon: '💼', allowedUserTypes: ['agency', 'cast_agency'], order: 300, description: 'Talent representation agency portal' },
-  { menuId: 'agency-wallet',            path: '/casting/wallet',                 label: 'Agency Wallet',           icon: '💰', allowedUserTypes: ['agency', 'cast_agency'], order: 310, description: 'Agency revenue & commission wallet' },
-  { menuId: 'agent-portal',             path: '/casting/agent/dashboard',        label: 'Agent Portal',            icon: '👔', allowedUserTypes: ['agency', 'cast_agency'], order: 320, description: 'Agent client management workspace' },
-  { menuId: 'agent-connections',        path: '/casting/agent/connections',      label: 'Agent Connections',       icon: '🤝', allowedUserTypes: ['agency', 'cast_agency'], order: 330, description: 'Direct producer connections' },
-  { menuId: 'agent-messages',           path: '/casting/agent/messages',         label: 'Agent Messages',          icon: '💬', allowedUserTypes: ['agency', 'cast_agency'], order: 340, description: 'Representation messages' },
 
-  // ── Production Crew Role ──
+  // Agency: My Work Group
+  { menuId: 'agency-my-work',           path: '',                                label: 'My Work',                 icon: '💼', allowedUserTypes: ['agency', 'cast_agency'], order: 310, description: 'Agency work dropdown container', isContainer: true },
+  { menuId: 'agency-auditions',         path: '/casting/auditions',              label: 'Review Auditions',        icon: '🎞️', parentMenuId: 'agency-my-work', allowedUserTypes: ['agency', 'cast_agency'], order: 311, description: 'Review submissions' },
+  { menuId: 'agency-bookings',          path: '/casting/bookings',               label: 'Manage Bookings',         icon: '🤝', parentMenuId: 'agency-my-work', allowedUserTypes: ['agency', 'cast_agency'], order: 312, description: 'Manage bookings' },
+  { menuId: 'agency-invitations',       path: '/casting/invitations',            label: 'Invitations',             icon: '✉️', parentMenuId: 'agency-my-work', allowedUserTypes: ['agency', 'cast_agency'], order: 313, description: 'Agency invitations' },
+
+  // Agency: Manage Group
+  { menuId: 'agency-manage',            path: '',                                label: 'Manage',                  icon: '⚙️', allowedUserTypes: ['agency', 'cast_agency'], order: 320, description: 'Agency management dropdown container', isContainer: true },
+  { menuId: 'agency-my-talents',        path: '/casting/my-talents',             label: 'My Talents',              icon: '⭐', parentMenuId: 'agency-manage', allowedUserTypes: ['agency', 'cast_agency'], order: 321, description: 'Roster management' },
+  { menuId: 'agency-talent-search',     path: '/casting/talent-search',          label: 'Talent Search',           icon: '🔍', parentMenuId: 'agency-manage', allowedUserTypes: ['agency', 'cast_agency'], order: 322, description: 'Search talents' },
+  { menuId: 'agency-call-sheets',       path: '/casting/call-sheets',            label: 'Call Sheets',             icon: '📝', parentMenuId: 'agency-manage', allowedUserTypes: ['agency', 'cast_agency'], order: 323, description: 'Call sheets' },
+  { menuId: 'agency-wallet',            path: '/casting/wallet',                 label: 'Agency Wallet',           icon: '💰', parentMenuId: 'agency-manage', allowedUserTypes: ['agency', 'cast_agency'], order: 324, description: 'Agency revenue & commission wallet' },
+
+
+  // ── 4. Production Crew Role ──
   { menuId: 'crew-dashboard',           path: '/casting/crew-dashboard',         label: 'Crew Dashboard',          icon: '🛠️', allowedUserTypes: ['production_crew'], order: 400, description: 'Technical crew workspace' },
-  { menuId: 'crew-profile-setup',       path: '/casting/crew-profile-setup',     label: 'Crew Profile Setup',      icon: '⚙️', allowedUserTypes: ['production_crew'], order: 410, description: 'Crew credits, gear & rates' },
+  { menuId: 'crew-profile-setup',       path: '/casting/crew-profile-setup',     label: 'Crew Setup',              icon: '⚙️', allowedUserTypes: ['production_crew'], order: 410, description: 'Crew credits, gear & rates' },
+  { menuId: 'crew-call-sheets',         path: '/casting/call-sheets',            label: 'Call Sheets',             icon: '📋', allowedUserTypes: ['production_crew'], order: 420, description: 'Production call sheets' },
 
-  // ── Location Scout Role ──
+  // ── 5. Location Scout Role ──
   { menuId: 'scout-my-locations',       path: '/casting/my-locations',           label: 'My Locations',            icon: '🗺️', allowedUserTypes: ['location_scout'], order: 500, description: 'Scouted location listing management' },
   { menuId: 'scout-register-location',  path: '/casting/locations/register',     label: 'Register Location',       icon: '➕', allowedUserTypes: ['location_scout'], order: 510, description: 'Submit new location venue' },
 
-  // ── Aggregator Scout Role ──
-  { menuId: 'aggregator-dashboard',     path: '/casting/scout-dashboard',        label: 'Aggregator Scout Hub',    icon: '📡', allowedUserTypes: ['aggregator_scout'], order: 600, description: 'Casting aggregator portal' },
-  { menuId: 'aggregator-post-call',     path: '/casting/scout-dashboard/post',   label: 'Aggregator Post Call',    icon: '📢', allowedUserTypes: ['aggregator_scout'], order: 610, description: 'Post aggregated casting call' },
+  // ── 6. Aggregator Scout Role ──
+  { menuId: 'aggregator-dashboard',     path: '/casting/scout-dashboard',        label: 'Scout Dashboard',         icon: '📡', allowedUserTypes: ['aggregator_scout'], order: 600, description: 'Casting aggregator portal' },
+  { menuId: 'aggregator-post-call',     path: '/casting/scout-dashboard/post',   label: 'Post Casting Call',       icon: '📢', allowedUserTypes: ['aggregator_scout'], order: 610, description: 'Post aggregated casting call' },
 
-  // ── Academy Role ──
+  // ── 7. Academy Role ──
   { menuId: 'academy-dashboard',        path: '/casting/academy-dashboard',      label: 'Academy Dashboard',       icon: '🎓', allowedUserTypes: ['academy'], order: 700, description: 'Acting academy courses & students' },
   { menuId: 'academy-setup',            path: '/casting/academy-setup',          label: 'Academy Setup',           icon: '🏛️', allowedUserTypes: ['academy'], order: 710, description: 'Curriculum & instructor setup' },
 
-  // ── Studio Provider Role ──
-  { menuId: 'studio-dashboard',         path: '/casting/studio-dashboard',       label: 'Studio Dashboard',        icon: '🎥', allowedUserTypes: ['studio_provider'], order: 800, description: 'Soundstage rental schedule' },
-  { menuId: 'studio-setup',            path: '/casting/studio-setup',           label: 'Studio Setup',            icon: '🎙️', allowedUserTypes: ['studio_provider'], order: 810, description: 'Studio equipment & packages' },
+  // ── 8. Studio Provider Role ──
+  { menuId: 'studio-provider-dashboard',path: '/casting/employer',               label: 'Casting Dashboard',       icon: '🏢', allowedUserTypes: ['studio_provider'], order: 800, description: 'Studio provider overview' },
+  
+  // Studio: Studio Management Group
+  { menuId: 'studio-group',             path: '',                                label: 'Studio',                  icon: '🎥', allowedUserTypes: ['studio_provider'], order: 810, description: 'Studio dropdown container', isContainer: true },
+  { menuId: 'studio-dashboard',         path: '/casting/studio-dashboard',       label: 'Studio Dashboard',        icon: '🎥', parentMenuId: 'studio-group', allowedUserTypes: ['studio_provider'], order: 811, description: 'Soundstage rental schedule' },
+  { menuId: 'studio-setup',            path: '/casting/studio-setup',           label: 'Studio Setup',            icon: '🎙️', parentMenuId: 'studio-group', allowedUserTypes: ['studio_provider'], order: 812, description: 'Studio equipment & packages' },
 
-  // ── Subscriptions & Billing ──
-  { menuId: 'casting-subscriptions',    path: '/casting/subscriptions',          label: 'Subscription Plans',      icon: '💳', allowedUserTypes: ['talent', 'employer', 'agency', 'studio_provider'], order: 950, description: 'Casting membership plans' },
-  { menuId: 'user-billing',             path: '/profile/billing',                label: 'Quota & Billing Usage',   icon: '⚡', allowedUserTypes: ['talent', 'employer', 'agency', 'studio_provider'], order: 960, description: 'Resource allocations & billing usage' },
+  // Studio: My Work Group
+  { menuId: 'studio-my-work',           path: '',                                label: 'My Work',                 icon: '💼', allowedUserTypes: ['studio_provider'], order: 820, description: 'Studio work dropdown container', isContainer: true },
+  { menuId: 'studio-auditions',         path: '/casting/auditions',              label: 'Review Auditions',        icon: '🎞️', parentMenuId: 'studio-my-work', allowedUserTypes: ['studio_provider'], order: 821, description: 'Auditions' },
+  { menuId: 'studio-bookings',          path: '/casting/bookings',               label: 'Manage Bookings',         icon: '🤝', parentMenuId: 'studio-my-work', allowedUserTypes: ['studio_provider'], order: 822, description: 'Bookings' },
+  { menuId: 'studio-invitations',       path: '/casting/invitations',            label: 'Invitations',             icon: '✉️', parentMenuId: 'studio-my-work', allowedUserTypes: ['studio_provider'], order: 823, description: 'Invitations' },
+  { menuId: 'studio-my-talents',        path: '/casting/my-talents',             label: 'My Talents',              icon: '⭐', parentMenuId: 'studio-my-work', allowedUserTypes: ['studio_provider'], order: 824, description: 'Talents' },
+  { menuId: 'studio-talent-search',     path: '/casting/talent-search',          label: 'Talent Search',           icon: '🔍', parentMenuId: 'studio-my-work', allowedUserTypes: ['studio_provider'], order: 825, description: 'Talent search' },
+  { menuId: 'studio-call-sheets',       path: '/casting/call-sheets',            label: 'Call Sheets',             icon: '📝', parentMenuId: 'studio-my-work', allowedUserTypes: ['studio_provider'], order: 826, description: 'Call sheets' },
+
+  // Studio: AI Tools Group
+  { menuId: 'studio-ai-tools',          path: '',                                label: 'AI Tools',                icon: '⚡', allowedUserTypes: ['studio_provider'], order: 830, description: 'Studio AI tools dropdown container', isContainer: true },
+  { menuId: 'studio-productions',       path: '/casting/productions',            label: 'Productions',             icon: '🎬', parentMenuId: 'studio-ai-tools', allowedUserTypes: ['studio_provider'], order: 831, description: 'Productions' },
+  { menuId: 'studio-crew-organizer',    path: '/casting/screenplays/crew-org',   label: 'Crew Organizer',          icon: '🎛️', parentMenuId: 'studio-ai-tools', allowedUserTypes: ['studio_provider'], order: 832, description: 'Crew organizer' },
+
+  // Studio: Discover Group
+  { menuId: 'studio-discover',          path: '',                                label: 'Discover',                icon: '🌐', allowedUserTypes: ['studio_provider'], order: 840, description: 'Studio discover dropdown container', isContainer: true },
+  { menuId: 'studio-avatars',           path: '/casting/avatars',                label: 'AI Avatars',              icon: '🤖', parentMenuId: 'studio-discover', allowedUserTypes: ['studio_provider'], order: 841, description: 'AI avatars' },
+  { menuId: 'studio-search-talent',     path: '/casting/talent-search',          label: 'Talent Search',           icon: '🔍', parentMenuId: 'studio-discover', allowedUserTypes: ['studio_provider'], order: 842, description: 'Talent search' },
+  { menuId: 'studio-locations',         path: '/casting/locations',              label: 'Browse Locations',        icon: '📍', parentMenuId: 'studio-discover', allowedUserTypes: ['studio_provider'], order: 843, description: 'Locations' },
+  { menuId: 'studio-find-studios',      path: '/casting/studios',                label: 'Find Studios',            icon: '🎥', parentMenuId: 'studio-discover', allowedUserTypes: ['studio_provider'], order: 844, description: 'Studios' },
 ]
 
 export default function MenuConfigPage() {
@@ -395,16 +419,40 @@ export default function MenuConfigPage() {
           })
           createdCount++
         } else {
-          // Fix path or parentMenuId if divergent
+          // Fix path, parentMenuId, allowedUserTypes, or order if divergent
           const existing = existingMap.get(item.menuId)!
-          const needsFix = existing.path !== item.path || (existing.parentMenuId || null) !== (item.parentMenuId || null)
+          const needsFix =
+            existing.path !== item.path ||
+            (existing.parentMenuId || null) !== (item.parentMenuId || null) ||
+            JSON.stringify(existing.allowedUserTypes || []) !== JSON.stringify(item.allowedUserTypes || []) ||
+            existing.order !== item.order
+
           if (needsFix) {
             await menuConfigAPI.updateMenu(item.menuId, {
               path: item.path,
               parentMenuId: item.parentMenuId || null,
+              allowedUserTypes: item.allowedUserTypes,
+              order: item.order,
             })
             updatedCount++
           }
+        }
+      }
+
+      // Clean up legacy duplicate career coach entries so only 1 unified Career Coach exists
+      const obsoleteDuplicateIds = [
+        'talent-career-coach',
+        'talent-career-intelligence',
+        'talent-career-goals',
+        'employer-career-coach',
+        'employer-career-intelligence',
+        'employer-career-goals',
+      ]
+      for (const obsId of obsoleteDuplicateIds) {
+        if (existingMap.has(obsId)) {
+          try {
+            await menuConfigAPI.deleteMenu(obsId)
+          } catch {}
         }
       }
 
@@ -466,10 +514,45 @@ export default function MenuConfigPage() {
     if (statusFilter === 'active' && !m.isActive) return false
     if (statusFilter === 'inactive' && m.isActive) return false
     if (statusFilter === 'badged' && !m.badge) return false
-    if (statusFilter === 'gated' && (!m.allowedSubscriptionTiers || m.allowedSubscriptionTiers.length === 0)) return false
-
     return true
   })
+
+  // Hierarchical sorting so sub-items always display directly grouped under their parent container
+  const sortedData = (() => {
+    if (hierarchyFilter === 'children' || search.trim()) {
+      return [...filtered].sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+    }
+
+    const topLevel = filtered.filter(m => !m.parentMenuId)
+    const childrenByParent = new Map<string, MenuConfigItem[]>()
+    
+    filtered.forEach(m => {
+      if (m.parentMenuId) {
+        const list = childrenByParent.get(m.parentMenuId) || []
+        list.push(m)
+        childrenByParent.set(m.parentMenuId, list)
+      }
+    })
+
+    topLevel.sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+
+    const result: MenuConfigItem[] = []
+    topLevel.forEach(parent => {
+      result.push(parent)
+      const children = childrenByParent.get(parent.menuId) || []
+      children.sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+      result.push(...children)
+    })
+
+    // Include any orphan children whose parents were not in topLevel
+    filtered.forEach(m => {
+      if (m.parentMenuId && !result.some(r => r.menuId === m.menuId)) {
+        result.push(m)
+      }
+    })
+
+    return result
+  })()
 
   // Quick Counters (Casting Platform)
   const totalCount = menus.length
@@ -692,12 +775,21 @@ export default function MenuConfigPage() {
         actions={
           <div className="flex items-center gap-2">
             <button
+              onClick={handleSeedStandardCatalogue}
+              disabled={Boolean(actionLoading)}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-xs"
+              title="1-Click Sync all standard menus, fix hierarchies, and restore all missing sub-items"
+            >
+              <FiRefreshCw className={`w-3.5 h-3.5 ${actionLoading === 'seed' ? 'animate-spin' : ''}`} />
+              <span>Sync Standard Catalogue</span>
+            </button>
+            <button
               onClick={() => setShowCatalogModal(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 rounded-xl text-xs font-bold transition"
               title="View 59-item casting catalogue reference guide & sync missing items"
             >
               <FiLayers className="w-3.5 h-3.5" />
-              <span>59-Menu Catalogue</span>
+              <span>Catalogue Guide</span>
             </button>
             <button
               onClick={handleOpenCreate}
@@ -809,19 +901,38 @@ export default function MenuConfigPage() {
 
         {/* Filters & Search Controls */}
         <div className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3 shadow-xs">
+          {/* 1-Click Sync Quick Banner */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 p-3 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl">
+            <div className="flex items-center gap-2 text-xs font-bold text-purple-900">
+              <FiLayers className="w-4 h-4 text-purple-600 shrink-0" />
+              <span>Fix sub-menus & sync all 6 items into "My Work", "Services", and all roles:</span>
+            </div>
+            <button
+              onClick={handleSeedStandardCatalogue}
+              disabled={Boolean(actionLoading)}
+              className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-black shadow-xs transition flex items-center gap-1.5 shrink-0"
+            >
+              <FiRefreshCw className={`w-3.5 h-3.5 ${actionLoading === 'seed' ? 'animate-spin' : ''}`} />
+              <span>Click to Sync & Heal Database Now</span>
+            </button>
+          </div>
+
           {/* Role Filters */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
             <span className="text-[10px] font-black text-gray-400 uppercase mr-1 shrink-0">Audience:</span>
             {[
               { id: 'all',          label: 'All Roles' },
               { id: 'everyone',     label: 'Everyone (Public)' },
-              { id: 'talent',       label: 'Talent' },
+              { id: 'talent',       label: 'Talent / Actor' },
               { id: 'employer',     label: 'Employer / Producer' },
+              { id: 'content_creator', label: 'Content Creator' },
               { id: 'agency',       label: 'Agency' },
+              { id: 'cast_agency',  label: 'Cast Agency' },
               { id: 'production_crew', label: 'Crew' },
               { id: 'location_scout',  label: 'Location Scout' },
+              { id: 'aggregator_scout',label: 'Aggregator Scout' },
               { id: 'academy',      label: 'Academy' },
-              { id: 'studio_provider', label: 'Studio' },
+              { id: 'studio_provider', label: 'Studio Provider' },
             ].map(r => (
               <button
                 key={r.id}
@@ -909,7 +1020,7 @@ export default function MenuConfigPage() {
         <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xs">
           <DataTable
             columns={columns}
-            data={filtered}
+            data={sortedData}
             loading={loading}
             emptyMsg="No casting menu items found matching your filter criteria"
           />
