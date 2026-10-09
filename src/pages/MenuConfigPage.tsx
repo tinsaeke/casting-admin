@@ -7,7 +7,8 @@ import {
   FiRefreshCw, FiMenu, FiPlus, FiEdit2, FiTrash2, FiTag,
   FiCheckCircle, FiXCircle, FiLock, FiGlobe, FiEye, FiEyeOff,
   FiLayers, FiSliders, FiCopy, FiCheck, FiX, FiAlertCircle,
-  FiStar, FiUsers, FiCpu, FiExternalLink, FiHelpCircle
+  FiStar, FiUsers, FiCpu, FiExternalLink, FiHelpCircle,
+  FiCornerDownRight, FiFolder, FiLink, FiChevronDown
 } from 'react-icons/fi'
 
 // Pre-defined role options for casting
@@ -32,43 +33,115 @@ const SUBSCRIPTION_TIERS = [
   { id: 'vip',          label: 'VIP' },
 ]
 
-export const ALL_36_CASTING_MENUS = [
-  { menuId: 'casting-calls',            path: '/casting',                       label: 'Casting Calls',           icon: '🎬', allowedUserTypes: [],                                                                 order: 10,  description: 'Everyone' },
-  { menuId: 'casting-talent-browse',     path: '/casting/talent-search',          label: 'Browse Talents',          icon: '👥', allowedUserTypes: [],                                                                 order: 20,  description: 'Everyone' },
-  { menuId: 'casting-studios',          path: '/casting/studios',                label: 'Studios',                 icon: '🎥', allowedUserTypes: [],                                                                 order: 30,  description: 'Everyone' },
-  { menuId: 'casting-academies',        path: '/casting/academies',              label: 'Academies',               icon: '🏫', allowedUserTypes: [],                                                                 order: 40,  description: 'Everyone' },
-  { menuId: 'casting-locations',        path: '/casting/locations',              label: 'Locations',               icon: '📍', allowedUserTypes: [],                                                                 order: 50,  description: 'Everyone' },
-  { menuId: 'replicas-marketplace',     path: '/casting/replicas/marketplace',   label: 'AI Replica Marketplace',  icon: '🤖', allowedUserTypes: [],                                                                 order: 60,  description: 'Everyone' },
-  { menuId: 'talent-dashboard',         path: '/casting/talent-dashboard',       label: 'Talent Dashboard',        icon: '📊', allowedUserTypes: ['talent'],                                                         order: 100, description: 'talent' },
-  { menuId: 'talent-auditions',         path: '/casting/auditions',              label: 'My Auditions',            icon: '📹', allowedUserTypes: ['talent'],                                                         order: 110, description: 'talent' },
-  { menuId: 'talent-bookings',          path: '/casting/bookings',               label: 'My Bookings',             icon: '📑', allowedUserTypes: ['talent'],                                                         order: 120, description: 'talent' },
-  { menuId: 'talent-invitations',       path: '/casting/invitations',            label: 'Invitations',             icon: '✉️', allowedUserTypes: ['talent'],                                                         order: 130, description: 'talent' },
-  { menuId: 'talent-call-sheets',       path: '/casting/call-sheets',            label: 'Call Sheets',             icon: '📋', allowedUserTypes: ['talent'],                                                         order: 140, description: 'talent' },
-  { menuId: 'talent-wallet',            path: '/casting/wallet',                 label: 'Talent Wallet',           icon: '💳', allowedUserTypes: ['talent'],                                                         order: 150, description: 'talent' },
-  { menuId: 'talent-practice-studio',   path: '/casting/rehearsal',              label: 'Practice Studio',         icon: '🎭', allowedUserTypes: ['talent'],                                                         order: 160, description: 'talent' },
-  { menuId: 'talent-my-replica',        path: '/casting/replicas/my-replica',    label: 'My AI Replica',           icon: '✨', allowedUserTypes: ['talent'],                                                         order: 170, description: 'talent' },
-  { menuId: 'employer-dashboard',       path: '/casting/employer',               label: 'Employer Dashboard',      icon: '🏢', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'],                  order: 200, description: 'employer, studio_provider, content_creator' },
-  { menuId: 'employer-auditions',       path: '/casting/auditions',              label: 'Review Auditions',        icon: '🎞️', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'],                  order: 210, description: 'employer, studio_provider, content_creator' },
-  { menuId: 'employer-bookings',        path: '/casting/bookings',               label: 'Manage Bookings',         icon: '🤝', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'],                  order: 220, description: 'employer, studio_provider, content_creator' },
-  { menuId: 'employer-my-talents',      path: '/casting/my-talents',             label: 'Roster / My Talents',     icon: '⭐', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider'],          order: 230, description: 'employer, agency, cast_agency, studio_provider' },
-  { menuId: 'employer-talent-search',   path: '/casting/talent-search',          label: 'Talent Scout Engine',     icon: '🔍', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider', 'content_creator'], order: 240, description: 'employer, agency, cast_agency, studio_provider, content_creator' },
-  { menuId: 'employer-call-sheets',     path: '/casting/call-sheets',            label: 'Create Call Sheets',      icon: '📝', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider'],          order: 250, description: 'employer, agency, cast_agency, studio_provider' },
-  { menuId: 'employer-productions',     path: '/casting/productions',            label: 'Productions',             icon: '🎬', allowedUserTypes: ['employer', 'agency', 'studio_provider', 'content_creator'],          order: 260, description: 'employer, agency, studio_provider, content_creator' },
-  { menuId: 'employer-crew-organizer',  path: '/casting/screenplays/crew-org',   label: 'Crew Organizer',          icon: '🎛️', allowedUserTypes: ['employer', 'agency', 'studio_provider'],                          order: 270, description: 'employer, agency, studio_provider' },
-  { menuId: 'replicas-my-licenses',     path: '/casting/replicas/licenses',      label: 'Purchased Replica Licenses', icon: '📜', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider', 'content_creator'], order: 280, description: 'employer, agency, cast_agency, studio_provider, content_creator' },
-  { menuId: 'agency-dashboard',         path: '/casting/agency/dashboard',       label: 'Agency Dashboard',        icon: '💼', allowedUserTypes: ['agency', 'cast_agency'],                                         order: 300, description: 'agency, cast_agency' },
-  { menuId: 'agency-wallet',            path: '/casting/wallet',                 label: 'Agency Wallet',           icon: '💰', allowedUserTypes: ['agency', 'cast_agency'],                                         order: 310, description: 'agency, cast_agency' },
-  { menuId: 'crew-dashboard',           path: '/casting/crew-dashboard',         label: 'Crew Dashboard',          icon: '🛠️', allowedUserTypes: ['production_crew'],                                                order: 400, description: 'production_crew' },
-  { menuId: 'crew-profile-setup',       path: '/casting/crew-profile-setup',     label: 'Crew Profile Setup',      icon: '⚙️', allowedUserTypes: ['production_crew'],                                                order: 410, description: 'production_crew' },
-  { menuId: 'scout-my-locations',       path: '/casting/my-locations',           label: 'My Locations',            icon: '🗺️', allowedUserTypes: ['location_scout'],                                                 order: 500, description: 'location_scout' },
-  { menuId: 'scout-register-location',  path: '/casting/locations/register',     label: 'Register Location',       icon: '➕', allowedUserTypes: ['location_scout'],                                                 order: 510, description: 'location_scout' },
-  { menuId: 'aggregator-dashboard',     path: '/casting/scout-dashboard',        label: 'Aggregator Scout Hub',    icon: '📡', allowedUserTypes: ['aggregator_scout'],                                               order: 600, description: 'aggregator_scout' },
-  { menuId: 'aggregator-post-call',     path: '/casting/scout-dashboard/post',   label: 'Aggregator Post Call',    icon: '📢', allowedUserTypes: ['aggregator_scout'],                                               order: 610, description: 'aggregator_scout' },
-  { menuId: 'academy-dashboard',        path: '/casting/academy-dashboard',      label: 'Academy Dashboard',       icon: '🎓', allowedUserTypes: ['academy'],                                                        order: 700, description: 'academy' },
-  { menuId: 'academy-setup',            path: '/casting/academy-setup',          label: 'Academy Setup',           icon: '🏛️', allowedUserTypes: ['academy'],                                                        order: 710, description: 'academy' },
-  { menuId: 'studio-dashboard',         path: '/casting/studio-dashboard',       label: 'Studio Dashboard',        icon: '🎥', allowedUserTypes: ['studio_provider'],                                                order: 800, description: 'studio_provider' },
-  { menuId: 'studio-setup',            path: '/casting/studio-setup',           label: 'Studio Setup',            icon: '🎙️', allowedUserTypes: ['studio_provider'],                                                order: 810, description: 'studio_provider' },
-  { menuId: 'casting-invitations',      path: '/casting/invitations',            label: 'Global Invitations',      icon: '📬', allowedUserTypes: ['talent', 'employer', 'agency', 'cast_agency', 'academy', 'studio_provider'], order: 900, description: 'talent, employer, agency, cast_agency, academy, studio_provider' },
+// ── Complete 59-Item Standard Casting Menu Catalogue ───────────────────────────
+export const ALL_59_CASTING_MENUS: Array<{
+  menuId: string
+  path: string
+  label: string
+  icon?: string
+  parentMenuId?: string | null
+  allowedUserTypes: string[]
+  order: number
+  description: string
+  isContainer?: boolean
+}> = [
+  // ── Public / Common (Everyone) ──
+  { menuId: 'casting-calls',            path: '/casting',                       label: 'Casting Calls',           icon: '🎬', allowedUserTypes: [], order: 10,  description: 'Public open casting notices' },
+  { menuId: 'casting-talent-browse',     path: '/casting/talent-search',          label: 'Browse Talents',          icon: '👥', allowedUserTypes: [], order: 20,  description: 'Public talent discovery' },
+  { menuId: 'casting-studios',          path: '/casting/studios',                label: 'Studios',                 icon: '🎥', allowedUserTypes: [], order: 30,  description: 'Production studios directory' },
+  { menuId: 'casting-academies',        path: '/casting/academies',              label: 'Academies',               icon: '🏫', allowedUserTypes: [], order: 40,  description: 'Acting & film academies' },
+  { menuId: 'casting-agencies',         path: '/casting/agencies',               label: 'Agencies',                icon: '🏢', allowedUserTypes: [], order: 45,  description: 'Talent representation agencies' },
+  { menuId: 'casting-locations',        path: '/casting/locations',              label: 'Locations',               icon: '📍', allowedUserTypes: [], order: 50,  description: 'Filming locations catalog' },
+  { menuId: 'replicas-marketplace',     path: '/casting/avatars',                label: 'AI Replica Marketplace',  icon: '🤖', allowedUserTypes: [], order: 60,  description: 'Digital replica likeness licensing' },
+  { menuId: 'career-coach-hub',         path: '/career-coach',                   label: 'Career Intelligence',     icon: '💡', allowedUserTypes: [], order: 70,  description: 'AI Career Coach Hub' },
+  { menuId: 'career-coach-goals',       path: '/career-coach/goals',             label: 'Career Goals',            icon: '🎯', allowedUserTypes: [], order: 80,  description: 'Career goal tracking' },
+  { menuId: 'casting-invitations',      path: '/casting/invitations',            label: 'Global Invitations',      icon: '📬', allowedUserTypes: ['talent', 'employer', 'agency', 'cast_agency', 'academy', 'studio_provider'], order: 90, description: 'Audition invitations gateway' },
+
+  // ── Talent / Actor Role ──
+  { menuId: 'talent-dashboard',         path: '/casting/talent-dashboard',       label: 'Talent Dashboard',        icon: '📊', allowedUserTypes: ['talent'], order: 100, description: 'Talent personal workspace' },
+  
+  // Talent: Services Group
+  { menuId: 'talent-services',          path: '',                                label: 'Services',                icon: '⭐', allowedUserTypes: ['talent'], order: 105, description: 'Talent services dropdown container', isContainer: true },
+  { menuId: 'talent-auditions',         path: '/casting/auditions',              label: 'My Auditions',            icon: '📹', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 110, description: 'Submitted auditions & callbacks' },
+  { menuId: 'talent-bookings',          path: '/casting/bookings',               label: 'My Bookings',             icon: '📑', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 120, description: 'Contracted bookings & dates' },
+  { menuId: 'talent-invitations',       path: '/casting/invitations',            label: 'Invitations',             icon: '✉️', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 130, description: 'Direct casting invitations' },
+  { menuId: 'talent-call-sheets',       path: '/casting/call-sheets',            label: 'Call Sheets',             icon: '📋', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 140, description: 'Production shooting schedules' },
+  { menuId: 'talent-wallet',            path: '/casting/wallet',                 label: 'Talent Wallet',           icon: '💳', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 150, description: 'Talent earnings & royalties' },
+  { menuId: 'talent-practice-studio',   path: '/casting/talent-dashboard?tab=rehearsal', label: 'Practice Studio', icon: '🎭', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 160, description: 'AI teleprompter & rehearsal' },
+  { menuId: 'talent-my-replica',        path: '/casting/talent-dashboard?tab=avatar',    label: 'My AI Replica & Likeness', icon: '✨', parentMenuId: 'talent-services', allowedUserTypes: ['talent'], order: 170, description: 'Digital likeness & avatar studio' },
+
+  // Talent: Assessments Group
+  { menuId: 'talent-assessments-group', path: '',                                label: 'Assessments',             icon: '🧠', allowedUserTypes: ['talent'], order: 175, description: 'Talent psychometric assessments container', isContainer: true },
+  { menuId: 'talent-assessments',       path: '/talent/assessments',             label: 'Assessments Hub',         icon: '🧠', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 180, description: 'Assessments overview' },
+  { menuId: 'talent-enneagram',         path: '/talent/assessments/enneagram/start', label: 'Enneagram Personality', icon: '🔢', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 185, description: 'Enneagram behavioral test' },
+  { menuId: 'talent-archetypes',        path: '/talent/assessments/archetype/start', label: '12 Archetypes Energy', icon: '🎭', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 190, description: 'Character archetypes test' },
+  { menuId: 'talent-assessment-results',path: '/talent/assessments/enneagram/results', label: 'Assessment Results', icon: '📈', parentMenuId: 'talent-assessments-group', allowedUserTypes: ['talent'], order: 195, description: 'Talent scorecard & insights' },
+
+  // Talent: Career Coach Group
+  { menuId: 'talent-career-coach',      path: '',                                label: 'Career Coach',            icon: '💡', allowedUserTypes: ['talent'], order: 196, description: 'Talent coach dropdown container', isContainer: true },
+  { menuId: 'talent-coach-hub',         path: '/career-coach',                   label: 'Career Intelligence',     icon: '💡', parentMenuId: 'talent-career-coach', allowedUserTypes: ['talent'], order: 197, description: 'Career strategy AI' },
+  { menuId: 'talent-coach-goals',       path: '/career-coach/goals',             label: 'Career Goals',            icon: '🎯', parentMenuId: 'talent-career-coach', allowedUserTypes: ['talent'], order: 198, description: 'Milestones & action steps' },
+
+  // ── Employer / Producer / Director / Content Creator Role ──
+  { menuId: 'employer-dashboard',       path: '/casting/employer',               label: 'Employer Dashboard',      icon: '🏢', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 200, description: 'Employer management workspace' },
+
+  // Employer: My Work Group
+  { menuId: 'employer-my-work',         path: '',                                label: 'My Work',                 icon: '💼', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 205, description: 'Employer work dropdown container', isContainer: true },
+  { menuId: 'employer-auditions',       path: '/casting/auditions',              label: 'Review Auditions',        icon: '🎞️', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 210, description: 'Review audition tape submissions' },
+  { menuId: 'employer-bookings',        path: '/casting/bookings',               label: 'Manage Bookings',         icon: '🤝', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 220, description: 'Cast booking contracts' },
+  { menuId: 'employer-invitations',     path: '/casting/invitations',            label: 'Sent Invitations',        icon: '✉️', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 225, description: 'Direct audition requests' },
+  { menuId: 'employer-my-talents',      path: '/casting/my-talents',             label: 'Roster / My Talents',     icon: '⭐', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider'], order: 230, description: 'Saved talent rosters' },
+  { menuId: 'employer-talent-search',   path: '/casting/talent-search',          label: 'Talent Scout Engine',     icon: '🔍', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider', 'content_creator'], order: 240, description: 'Advanced talent search' },
+  { menuId: 'employer-call-sheets',     path: '/casting/call-sheets',            label: 'Create Call Sheets',      icon: '📝', parentMenuId: 'employer-my-work', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider'], order: 250, description: 'Daily production shooting schedules' },
+
+  // Employer: Discover Group
+  { menuId: 'employer-discover',        path: '',                                label: 'Discover',                icon: '🌐', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 255, description: 'Discovery dropdown container', isContainer: true },
+  { menuId: 'employer-digital-replicas',path: '/casting/avatars',                label: 'AI Digital Avatars',      icon: '🤖', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 256, description: 'AI avatar marketplace for producers' },
+  { menuId: 'replicas-my-licenses',     path: '/casting/avatars',                label: 'Purchased Licenses',      icon: '📜', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'agency', 'cast_agency', 'studio_provider', 'content_creator'], order: 257, description: 'Licensed replica assets' },
+  { menuId: 'employer-locations',       path: '/casting/locations',              label: 'Film Locations',          icon: '📍', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 258, description: 'Scout filming venues' },
+  { menuId: 'employer-studios',         path: '/casting/studios',                label: 'Production Studios',      icon: '🎥', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 259, description: 'Book soundstages & gear' },
+  { menuId: 'employer-academies',       path: '/casting/academies',              label: 'Acting Academies',        icon: '🏫', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 260, description: 'Discover academy students' },
+
+  // Employer: AI Tools Group
+  { menuId: 'employer-ai-tools',        path: '',                                label: 'AI Tools',                icon: '⚡', allowedUserTypes: ['employer', 'agency', 'studio_provider', 'content_creator'], order: 265, description: 'AI tools dropdown container', isContainer: true },
+  { menuId: 'employer-productions',     path: '/casting/productions',            label: 'Productions',             icon: '🎬', parentMenuId: 'employer-ai-tools', allowedUserTypes: ['employer', 'agency', 'studio_provider', 'content_creator'], order: 270, description: 'Film & project management' },
+  { menuId: 'employer-crew-organizer',  path: '/casting/screenplays/crew-org',   label: 'Crew Organizer',          icon: '🎛️', parentMenuId: 'employer-ai-tools', allowedUserTypes: ['employer', 'agency', 'studio_provider'], order: 275, description: 'AI script breakdown & crew planner' },
+
+  // Employer: Career Coach Group
+  { menuId: 'employer-career-coach',    path: '',                                label: 'Career Coach',            icon: '💡', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 280, description: 'Producer career coach dropdown container', isContainer: true },
+  { menuId: 'employer-coach-hub',       path: '/career-coach',                   label: 'Career Intelligence',     icon: '💡', parentMenuId: 'employer-career-coach', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 285, description: 'Executive career coaching' },
+  { menuId: 'employer-coach-goals',     path: '/career-coach/goals',             label: 'Career Goals',            icon: '🎯', parentMenuId: 'employer-career-coach', allowedUserTypes: ['employer', 'studio_provider', 'content_creator'], order: 290, description: 'Strategic milestones' },
+
+  // ── Agency / Cast Agency Role ──
+  { menuId: 'agency-dashboard',         path: '/casting/agency/dashboard',       label: 'Agency Dashboard',        icon: '💼', allowedUserTypes: ['agency', 'cast_agency'], order: 300, description: 'Talent representation agency portal' },
+  { menuId: 'agency-wallet',            path: '/casting/wallet',                 label: 'Agency Wallet',           icon: '💰', allowedUserTypes: ['agency', 'cast_agency'], order: 310, description: 'Agency revenue & commission wallet' },
+  { menuId: 'agent-portal',             path: '/casting/agent/dashboard',        label: 'Agent Portal',            icon: '👔', allowedUserTypes: ['agency', 'cast_agency'], order: 320, description: 'Agent client management workspace' },
+  { menuId: 'agent-connections',        path: '/casting/agent/connections',      label: 'Agent Connections',       icon: '🤝', allowedUserTypes: ['agency', 'cast_agency'], order: 330, description: 'Direct producer connections' },
+  { menuId: 'agent-messages',           path: '/casting/agent/messages',         label: 'Agent Messages',          icon: '💬', allowedUserTypes: ['agency', 'cast_agency'], order: 340, description: 'Representation messages' },
+
+  // ── Production Crew Role ──
+  { menuId: 'crew-dashboard',           path: '/casting/crew-dashboard',         label: 'Crew Dashboard',          icon: '🛠️', allowedUserTypes: ['production_crew'], order: 400, description: 'Technical crew workspace' },
+  { menuId: 'crew-profile-setup',       path: '/casting/crew-profile-setup',     label: 'Crew Profile Setup',      icon: '⚙️', allowedUserTypes: ['production_crew'], order: 410, description: 'Crew credits, gear & rates' },
+
+  // ── Location Scout Role ──
+  { menuId: 'scout-my-locations',       path: '/casting/my-locations',           label: 'My Locations',            icon: '🗺️', allowedUserTypes: ['location_scout'], order: 500, description: 'Scouted location listing management' },
+  { menuId: 'scout-register-location',  path: '/casting/locations/register',     label: 'Register Location',       icon: '➕', allowedUserTypes: ['location_scout'], order: 510, description: 'Submit new location venue' },
+
+  // ── Aggregator Scout Role ──
+  { menuId: 'aggregator-dashboard',     path: '/casting/scout-dashboard',        label: 'Aggregator Scout Hub',    icon: '📡', allowedUserTypes: ['aggregator_scout'], order: 600, description: 'Casting aggregator portal' },
+  { menuId: 'aggregator-post-call',     path: '/casting/scout-dashboard/post',   label: 'Aggregator Post Call',    icon: '📢', allowedUserTypes: ['aggregator_scout'], order: 610, description: 'Post aggregated casting call' },
+
+  // ── Academy Role ──
+  { menuId: 'academy-dashboard',        path: '/casting/academy-dashboard',      label: 'Academy Dashboard',       icon: '🎓', allowedUserTypes: ['academy'], order: 700, description: 'Acting academy courses & students' },
+  { menuId: 'academy-setup',            path: '/casting/academy-setup',          label: 'Academy Setup',           icon: '🏛️', allowedUserTypes: ['academy'], order: 710, description: 'Curriculum & instructor setup' },
+
+  // ── Studio Provider Role ──
+  { menuId: 'studio-dashboard',         path: '/casting/studio-dashboard',       label: 'Studio Dashboard',        icon: '🎥', allowedUserTypes: ['studio_provider'], order: 800, description: 'Soundstage rental schedule' },
+  { menuId: 'studio-setup',            path: '/casting/studio-setup',           label: 'Studio Setup',            icon: '🎙️', allowedUserTypes: ['studio_provider'], order: 810, description: 'Studio equipment & packages' },
+
+  // ── Subscriptions & Billing ──
+  { menuId: 'casting-subscriptions',    path: '/casting/subscriptions',          label: 'Subscription Plans',      icon: '💳', allowedUserTypes: ['talent', 'employer', 'agency', 'studio_provider'], order: 950, description: 'Casting membership plans' },
+  { menuId: 'user-billing',             path: '/profile/billing',                label: 'Quota & Billing Usage',   icon: '⚡', allowedUserTypes: ['talent', 'employer', 'agency', 'studio_provider'], order: 960, description: 'Resource allocations & billing usage' },
 ]
 
 export default function MenuConfigPage() {
@@ -78,6 +151,7 @@ export default function MenuConfigPage() {
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState<string>('all')
   const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [hierarchyFilter, setHierarchyFilter] = useState<string>('all')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -94,6 +168,7 @@ export default function MenuConfigPage() {
     label: string
     path: string
     icon: string
+    parentMenuId: string
     isActive: boolean
     order: number
     allowedUserTypes: string[]
@@ -105,6 +180,7 @@ export default function MenuConfigPage() {
     label: '',
     path: '',
     icon: '🎬',
+    parentMenuId: '',
     isActive: true,
     order: 100,
     allowedUserTypes: [],
@@ -117,7 +193,9 @@ export default function MenuConfigPage() {
     setLoading(true); setError('')
     try {
       const res = await menuConfigAPI.getCastingMenus('casting')
-      const list: MenuConfigItem[] = Array.isArray(res) ? res : (res?.data || res?.menus || [])
+      const rawList: MenuConfigItem[] = Array.isArray(res) ? res : (res?.data || res?.menus || [])
+      // Strictly isolate Casting platform menus only
+      const list = rawList.filter(m => m.platform === 'casting')
       // Sort by order ascending
       list.sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
       setMenus(list)
@@ -138,7 +216,7 @@ export default function MenuConfigPage() {
     try {
       await menuConfigAPI.toggleActive(menu.menuId, newStatus)
       setMenus(prev => prev.map(m => m.menuId === menu.menuId ? { ...m, isActive: newStatus } : m))
-      setSuccess(`Menu "${menu.label}" is now ${newStatus ? 'Active' : 'Inactive / Hidden'}.`)
+      setSuccess(`Menu "${menu.label}" is now ${newStatus ? 'Active' : 'Hidden'}.`)
     } catch (e: any) {
       setError(e.message || 'Failed to toggle menu status')
     }
@@ -168,8 +246,9 @@ export default function MenuConfigPage() {
     setFormData({
       menuId: m.menuId,
       label: m.label,
-      path: m.path,
+      path: m.path || '',
       icon: m.icon || '🎬',
+      parentMenuId: m.parentMenuId || '',
       isActive: m.isActive !== false,
       order: m.order ?? 100,
       allowedUserTypes: m.allowedUserTypes || [],
@@ -190,6 +269,7 @@ export default function MenuConfigPage() {
       label: '',
       path: '/casting/',
       icon: '✨',
+      parentMenuId: '',
       isActive: true,
       order: (menus.length + 1) * 10,
       allowedUserTypes: [],
@@ -209,6 +289,7 @@ export default function MenuConfigPage() {
         label: formData.label.trim(),
         path: formData.path.trim(),
         icon: formData.icon.trim(),
+        parentMenuId: formData.parentMenuId.trim() || null,
         isActive: formData.isActive,
         order: Number(formData.order),
         allowedUserTypes: formData.allowedUserTypes,
@@ -231,8 +312,8 @@ export default function MenuConfigPage() {
 
   // Save Create
   const handleSaveCreate = async () => {
-    if (!formData.menuId.trim() || !formData.label.trim() || !formData.path.trim()) {
-      setError('Please provide Menu ID, Label, and Path')
+    if (!formData.menuId.trim() || !formData.label.trim()) {
+      setError('Please provide Menu ID and Label')
       return
     }
     setActionLoading('new')
@@ -243,6 +324,7 @@ export default function MenuConfigPage() {
         label: formData.label.trim(),
         path: formData.path.trim(),
         icon: formData.icon.trim(),
+        parentMenuId: formData.parentMenuId.trim() || null,
         isActive: formData.isActive,
         order: Number(formData.order),
         platform: 'casting',
@@ -254,7 +336,7 @@ export default function MenuConfigPage() {
           en: formData.translations.en.trim() || formData.label.trim(),
         },
       })
-      setSuccess(`Menu item "${formData.label}" created successfully for casting platform.`)
+      setSuccess(`Menu item "${formData.label}" created successfully.`)
       setIsCreating(false)
       await load()
     } catch (e: any) {
@@ -280,27 +362,27 @@ export default function MenuConfigPage() {
     setActionLoading(null)
   }
 
-  // Quick Seed All 36 Standard Menus
+  // Seed / Sync All 59 Standard Menus
   const handleSeedStandardCatalogue = async () => {
-    if (!window.confirm('Sync/Pre-populate missing standard casting menus from the 36-item catalog?')) {
+    if (!window.confirm('Sync/Pre-populate missing casting menus from the full 59-item catalogue with corrected paths and dropdown hierarchies?')) {
       return
     }
     setActionLoading('seed')
     setError(''); setSuccess('')
     try {
-      const existingIds = new Set(menus.map(m => m.menuId))
-      const missing = ALL_36_CASTING_MENUS.filter(item => !existingIds.has(item.menuId))
-      
-      if (missing.length === 0) {
-        setSuccess('All 36 standard casting menus are already registered in the system!')
-      } else {
-        let createdCount = 0
-        for (const item of missing) {
+      const existingMap = new Map(menus.map(m => [m.menuId, m]))
+      let createdCount = 0
+      let updatedCount = 0
+
+      for (const item of ALL_59_CASTING_MENUS) {
+        if (!existingMap.has(item.menuId)) {
+          // Create missing
           await menuConfigAPI.createMenu({
             menuId: item.menuId,
             label: item.label,
             path: item.path,
             icon: item.icon,
+            parentMenuId: item.parentMenuId || null,
             order: item.order,
             isActive: true,
             platform: 'casting',
@@ -312,10 +394,22 @@ export default function MenuConfigPage() {
             },
           })
           createdCount++
+        } else {
+          // Fix path or parentMenuId if divergent
+          const existing = existingMap.get(item.menuId)!
+          const needsFix = existing.path !== item.path || (existing.parentMenuId || null) !== (item.parentMenuId || null)
+          if (needsFix) {
+            await menuConfigAPI.updateMenu(item.menuId, {
+              path: item.path,
+              parentMenuId: item.parentMenuId || null,
+            })
+            updatedCount++
+          }
         }
-        setSuccess(`Successfully seeded ${createdCount} standard casting menu items!`)
-        await load()
       }
+
+      setSuccess(`Sync Complete: Created ${createdCount} missing items and updated ${updatedCount} paths/hierarchies!`)
+      await load()
     } catch (e: any) {
       setError(e.message || 'Failed to seed standard menus')
     }
@@ -330,6 +424,9 @@ export default function MenuConfigPage() {
     setTimeout(() => setSuccess(''), 2500)
   }
 
+  // Dropdown containers (parent groups) in current system
+  const dropdownContainers = menus.filter(m => !m.path || m.path === '' || m.path === '#')
+
   // Filter logic
   const filtered = menus.filter(m => {
     // Search query
@@ -339,9 +436,21 @@ export default function MenuConfigPage() {
         m.label?.toLowerCase().includes(q) ||
         m.menuId?.toLowerCase().includes(q) ||
         m.path?.toLowerCase().includes(q) ||
+        m.parentMenuId?.toLowerCase().includes(q) ||
         m.translations?.am?.toLowerCase().includes(q) ||
         m.translations?.en?.toLowerCase().includes(q)
       if (!matchesSearch) return false
+    }
+
+    // Hierarchy filter
+    const isContainer = !m.path || m.path === '' || m.path === '#'
+    const hasParent = Boolean(m.parentMenuId)
+    if (hierarchyFilter === 'containers' && !isContainer) return false
+    if (hierarchyFilter === 'children' && !hasParent) return false
+    if (hierarchyFilter === 'toplevel' && (isContainer || hasParent)) return false
+    if (hierarchyFilter.startsWith('parent:')) {
+      const pid = hierarchyFilter.replace('parent:', '')
+      if (m.parentMenuId !== pid) return false
     }
 
     // Role filter
@@ -362,12 +471,15 @@ export default function MenuConfigPage() {
     return true
   })
 
-  // Quick Counters
+  // Quick Counters (Casting Platform)
   const totalCount = menus.length
   const activeCount = menus.filter(m => m.isActive !== false).length
   const inactiveCount = menus.filter(m => m.isActive === false).length
+  const dropdownCount = menus.filter(m => !m.path || m.path === '' || m.path === '#').length
+  const childCount = menus.filter(m => Boolean(m.parentMenuId)).length
   const badgedCount = menus.filter(m => Boolean(m.badge)).length
   const gatedCount = menus.filter(m => (m.allowedSubscriptionTiers || []).length > 0).length
+
 
   const columns = [
     {
@@ -379,49 +491,84 @@ export default function MenuConfigPage() {
       ),
     },
     {
-      key: 'menu', label: 'Menu Item & ID',
-      render: (m: MenuConfigItem) => (
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-lg shrink-0 border border-orange-100 shadow-xs">
-            {m.icon || '🎬'}
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-black text-gray-900 truncate">{m.label}</span>
-              {m.badge && (
-                <span className="px-1.5 py-0.2 rounded-full text-[10px] font-black bg-rose-500 text-white uppercase tracking-wider animate-pulse">
-                  {m.badge}
+      key: 'menu', label: 'Menu Item & Hierarchy',
+      render: (m: MenuConfigItem) => {
+        const isContainer = !m.path || m.path === '' || m.path === '#'
+        const isChild = Boolean(m.parentMenuId)
+        const parentItem = isChild ? menus.find(p => p.menuId === m.parentMenuId) : null
+        const childItems = isContainer ? menus.filter(c => c.parentMenuId === m.menuId) : []
+
+        return (
+          <div className={`flex items-center gap-3 ${isChild ? 'pl-4' : ''}`}>
+            {isChild && (
+              <FiCornerDownRight className="w-4 h-4 text-purple-400 shrink-0" />
+            )}
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 border shadow-xs ${
+              isContainer
+                ? 'bg-purple-100 text-purple-800 border-purple-200 ring-2 ring-purple-300/30'
+                : 'bg-orange-50 text-orange-600 border-orange-100'
+            }`}>
+              {m.icon || (isContainer ? '📁' : '🎬')}
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-black text-gray-900">{m.label}</span>
+                {isContainer && (
+                  <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-purple-600 text-white uppercase tracking-wider flex items-center gap-1">
+                    <FiFolder className="w-2.5 h-2.5" /> Dropdown ({childItems.length})
+                  </span>
+                )}
+                {isChild && (
+                  <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                    in {parentItem?.label || m.parentMenuId}
+                  </span>
+                )}
+                {m.badge && (
+                  <span className="px-1.5 py-0.2 rounded-full text-[10px] font-black bg-rose-500 text-white uppercase tracking-wider animate-pulse">
+                    {m.badge}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="text-[10px] font-mono text-purple-700 bg-purple-50 px-1.5 py-0.2 rounded truncate max-w-[140px]" title={m.menuId}>
+                  {m.menuId}
                 </span>
+                <button
+                  onClick={() => copyToClipboard(m.menuId)}
+                  className="text-gray-400 hover:text-purple-700 transition p-0.5"
+                  title="Copy menuId"
+                >
+                  <FiCopy className="w-2.5 h-2.5" />
+                </button>
+              </div>
+              {m.translations?.am && (
+                <p className="text-[10px] text-gray-500 mt-0.5">
+                  🇪🇹 <span className="font-medium text-gray-700">{m.translations.am}</span>
+                </p>
               )}
             </div>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[10px] font-mono text-purple-700 bg-purple-50 px-1.5 py-0.2 rounded truncate max-w-[140px]" title={m.menuId}>
-                {m.menuId}
-              </span>
-              <button
-                onClick={() => copyToClipboard(m.menuId)}
-                className="text-gray-400 hover:text-purple-700 transition p-0.5"
-                title="Copy menuId"
-              >
-                <FiCopy className="w-2.5 h-2.5" />
-              </button>
-            </div>
-            {m.translations?.am && (
-              <p className="text-[10px] text-gray-500 mt-0.5">
-                🇪🇹 <span className="font-medium text-gray-700">{m.translations.am}</span>
-              </p>
-            )}
           </div>
-        </div>
-      ),
+        )
+      },
     },
+
     {
-      key: 'path', label: 'Target Path',
-      render: (m: MenuConfigItem) => (
-        <span className="font-mono text-[11px] text-gray-700 bg-gray-50 border border-gray-200/60 px-2 py-1 rounded block max-w-fit truncate">
-          {m.path}
-        </span>
-      ),
+      key: 'path', label: 'Target Route Path',
+      render: (m: MenuConfigItem) => {
+        const isContainer = !m.path || m.path === '' || m.path === '#'
+        if (isContainer) {
+          return (
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-lg">
+              <FiChevronDown className="w-3 h-3" /> Dropdown Toggle (No Link)
+            </span>
+          )
+        }
+        return (
+          <span className="font-mono text-[11px] text-gray-700 bg-gray-50 border border-gray-200/60 px-2 py-1 rounded block max-w-fit truncate" title={m.path}>
+            {m.path}
+          </span>
+        )
+      },
     },
     {
       key: 'allowedUserTypes', label: 'Audience / Who Sees It',
@@ -436,7 +583,7 @@ export default function MenuConfigPage() {
         }
         return (
           <div className="flex flex-wrap gap-1 max-w-xs">
-            {roles.slice(0, 3).map(r => {
+            {roles.slice(0, 2).map(r => {
               const opt = ROLE_OPTIONS.find(o => o.id === r)
               return (
                 <span
@@ -449,9 +596,9 @@ export default function MenuConfigPage() {
                 </span>
               )
             })}
-            {roles.length > 3 && (
+            {roles.length > 2 && (
               <span className="text-[10px] font-bold bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
-                +{roles.length - 3} more
+                +{roles.length - 2} more
               </span>
             )}
           </div>
@@ -459,7 +606,7 @@ export default function MenuConfigPage() {
       },
     },
     {
-      key: 'tiers', label: 'Plan Gating',
+      key: 'tiers', label: 'Plan Paywall',
       render: (m: MenuConfigItem) => {
         const tiers = m.allowedSubscriptionTiers || []
         if (tiers.length === 0) {
@@ -477,7 +624,7 @@ export default function MenuConfigPage() {
       },
     },
     {
-      key: 'status', label: 'Status & Visibility',
+      key: 'status', label: 'Status',
       render: (m: MenuConfigItem) => {
         const active = m.isActive !== false
         const isBusy = actionLoading === m.menuId
@@ -541,16 +688,16 @@ export default function MenuConfigPage() {
     <div>
       <PageHeader
         title="Casting Dynamic Menu Configuration"
-        subtitle="Manage all 36 casting portal navigation menus, role-based visibility, notification badges, and subscription paywalls in real-time"
+        subtitle="Manage 2-level dropdown hierarchies, corrected route paths, role visibility, badges, and subscription paywalls"
         actions={
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowCatalogModal(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 rounded-xl text-xs font-bold transition"
-              title="View standard 36 casting menu reference guide and sync missing items"
+              title="View 59-item casting catalogue reference guide & sync missing items"
             >
               <FiLayers className="w-3.5 h-3.5" />
-              <span>36-Menu Catalogue</span>
+              <span>59-Menu Catalogue</span>
             </button>
             <button
               onClick={handleOpenCreate}
@@ -572,9 +719,9 @@ export default function MenuConfigPage() {
       />
 
       <div className="p-6 space-y-6">
-        {/* Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
-          <div className="bg-white border border-gray-200 rounded-2xl p-4 flex items-center gap-3 shadow-xs">
+        {/* Metric Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
+          <div className="bg-white border border-gray-200 rounded-2xl p-3.5 flex items-center gap-3 shadow-xs">
             <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-lg">
               <FiMenu className="w-5 h-5" />
             </div>
@@ -585,8 +732,38 @@ export default function MenuConfigPage() {
           </div>
 
           <div
+            onClick={() => setHierarchyFilter(hierarchyFilter === 'containers' ? 'all' : 'containers')}
+            className={`cursor-pointer border rounded-2xl p-3.5 flex items-center gap-3 transition ${
+              hierarchyFilter === 'containers' ? 'bg-purple-50 border-purple-300 ring-2 ring-purple-400/20 shadow-xs' : 'bg-white border-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-lg">
+              <FiFolder className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Dropdowns</p>
+              <p className="text-xl font-black text-gray-900">{dropdownCount}</p>
+            </div>
+          </div>
+
+          <div
+            onClick={() => setHierarchyFilter(hierarchyFilter === 'children' ? 'all' : 'children')}
+            className={`cursor-pointer border rounded-2xl p-3.5 flex items-center gap-3 transition ${
+              hierarchyFilter === 'children' ? 'bg-indigo-50 border-indigo-300 ring-2 ring-indigo-400/20 shadow-xs' : 'bg-white border-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-lg">
+              <FiCornerDownRight className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Sub-Items</p>
+              <p className="text-xl font-black text-gray-900">{childCount}</p>
+            </div>
+          </div>
+
+          <div
             onClick={() => setStatusFilter(statusFilter === 'active' ? 'all' : 'active')}
-            className={`cursor-pointer border rounded-2xl p-4 flex items-center gap-3 transition ${
+            className={`cursor-pointer border rounded-2xl p-3.5 flex items-center gap-3 transition ${
               statusFilter === 'active' ? 'bg-emerald-50 border-emerald-300 ring-2 ring-emerald-400/20 shadow-xs' : 'bg-white border-gray-200 hover:border-gray-300'
             }`}
           >
@@ -600,23 +777,8 @@ export default function MenuConfigPage() {
           </div>
 
           <div
-            onClick={() => setStatusFilter(statusFilter === 'inactive' ? 'all' : 'inactive')}
-            className={`cursor-pointer border rounded-2xl p-4 flex items-center gap-3 transition ${
-              statusFilter === 'inactive' ? 'bg-gray-100 border-gray-400 ring-2 ring-gray-400/20 shadow-xs' : 'bg-white border-gray-200 hover:border-gray-300'
-            }`}
-          >
-            <div className="w-10 h-10 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center font-bold text-lg">
-              <FiEyeOff className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Hidden</p>
-              <p className="text-xl font-black text-gray-900">{inactiveCount}</p>
-            </div>
-          </div>
-
-          <div
             onClick={() => setStatusFilter(statusFilter === 'badged' ? 'all' : 'badged')}
-            className={`cursor-pointer border rounded-2xl p-4 flex items-center gap-3 transition ${
+            className={`cursor-pointer border rounded-2xl p-3.5 flex items-center gap-3 transition ${
               statusFilter === 'badged' ? 'bg-rose-50 border-rose-300 ring-2 ring-rose-400/20 shadow-xs' : 'bg-white border-gray-200 hover:border-gray-300'
             }`}
           >
@@ -631,7 +793,7 @@ export default function MenuConfigPage() {
 
           <div
             onClick={() => setStatusFilter(statusFilter === 'gated' ? 'all' : 'gated')}
-            className={`cursor-pointer border rounded-2xl p-4 flex items-center gap-3 transition ${
+            className={`cursor-pointer border rounded-2xl p-3.5 flex items-center gap-3 transition ${
               statusFilter === 'gated' ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-400/20 shadow-xs' : 'bg-white border-gray-200 hover:border-gray-300'
             }`}
           >
@@ -645,7 +807,7 @@ export default function MenuConfigPage() {
           </div>
         </div>
 
-        {/* Filters & Search Bar */}
+        {/* Filters & Search Controls */}
         <div className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3 shadow-xs">
           {/* Role Filters */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
@@ -675,37 +837,54 @@ export default function MenuConfigPage() {
             ))}
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-gray-100">
-            {/* Status Tabs */}
-            <div className="flex items-center gap-1.5 w-full sm:w-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 pt-2 border-t border-gray-100">
+            {/* Hierarchy & Status Filters */}
+            <div className="flex items-center gap-1.5 flex-wrap w-full md:w-auto">
+              <span className="text-[10px] font-black text-gray-400 uppercase mr-1">Hierarchy:</span>
               {[
-                { id: 'all',      label: 'All Items' },
-                { id: 'active',   label: 'Active Only' },
-                { id: 'inactive', label: 'Hidden Only' },
-                { id: 'badged',   label: 'Has Badge' },
-                { id: 'gated',    label: 'Subscription Gated' },
-              ].map(st => (
+                { id: 'all',        label: 'All Hierarchy' },
+                { id: 'containers', label: 'Dropdown Containers' },
+                { id: 'children',   label: 'Sub-Items Only' },
+                { id: 'toplevel',   label: 'Direct Links' },
+              ].map(h => (
                 <button
-                  key={st.id}
-                  onClick={() => setStatusFilter(st.id)}
+                  key={h.id}
+                  onClick={() => setHierarchyFilter(h.id)}
                   className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                    statusFilter === st.id
-                      ? 'bg-gray-900 text-white'
-                      : 'text-gray-500 hover:bg-gray-100'
+                    hierarchyFilter === h.id
+                      ? 'bg-purple-600 text-white'
+                      : 'text-gray-600 bg-gray-50 hover:bg-gray-100'
                   }`}
                 >
-                  {st.label}
+                  {h.label}
                 </button>
               ))}
+
+              {/* Status Filter */}
+              <div className="ml-2 pl-2 border-l border-gray-200 flex items-center gap-1">
+                {['all', 'active', 'inactive', 'badged', 'gated'].map(st => (
+                  <button
+                    key={st}
+                    onClick={() => setStatusFilter(st)}
+                    className={`px-2 py-0.5 rounded text-[11px] font-bold capitalize ${
+                      statusFilter === st
+                        ? 'bg-gray-900 text-white'
+                        : 'text-gray-500 hover:bg-gray-100'
+                    }`}
+                  >
+                    {st}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Search Input */}
-            <div className="w-full sm:w-72">
+            <div className="w-full md:w-72">
               <input
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search label, menuId, path, translation..."
+                placeholder="Search label, menuId, path, parent..."
                 className="w-full px-3.5 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-orange-500 transition"
               />
             </div>
@@ -732,7 +911,7 @@ export default function MenuConfigPage() {
             columns={columns}
             data={filtered}
             loading={loading}
-            emptyMsg="No casting menu configuration items found matching your filters"
+            emptyMsg="No casting menu items found matching your filter criteria"
           />
         </div>
       </div>
@@ -795,7 +974,40 @@ export default function MenuConfigPage() {
                 </div>
               </div>
 
-              {/* Label & Path */}
+              {/* Hierarchy & Parent Dropdown Group */}
+              <div className="p-3 bg-purple-50/60 rounded-xl border border-purple-100 space-y-2">
+                <label className="text-[10px] font-bold text-purple-900 uppercase block">
+                  Dropdown Hierarchy / Parent Container
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <select
+                      value={formData.parentMenuId}
+                      onChange={e => setFormData(d => ({ ...d, parentMenuId: e.target.value }))}
+                      className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-900 focus:outline-none focus:border-purple-500"
+                    >
+                      <option value="">(None - Top Level Item)</option>
+                      {dropdownContainers.filter(dc => dc.menuId !== formData.menuId).map(dc => (
+                        <option key={dc.menuId} value={dc.menuId}>
+                          Parent: {dc.label} ({dc.menuId})
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-[10px] text-gray-400 mt-1">Select parent to nest under a dropdown</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setFormData(d => ({ ...d, path: '', parentMenuId: '' }))}
+                      className="px-2.5 py-1.5 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded-lg text-[11px] font-bold transition flex items-center gap-1"
+                    >
+                      <FiFolder className="w-3 h-3" /> Make Dropdown Container
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Label & Route Path */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">
@@ -815,13 +1027,13 @@ export default function MenuConfigPage() {
                 </div>
                 <div>
                   <label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">
-                    Route Path *
+                    Route Path (Leave empty if Dropdown Container)
                   </label>
                   <input
                     type="text"
                     value={formData.path}
                     onChange={e => setFormData(d => ({ ...d, path: e.target.value }))}
-                    placeholder="e.g. /casting/rehearsal"
+                    placeholder="e.g. /casting/talent-dashboard?tab=rehearsal"
                     className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl font-mono text-xs text-gray-900 focus:outline-none focus:border-orange-500 transition"
                   />
                 </div>
@@ -1048,16 +1260,16 @@ export default function MenuConfigPage() {
         </div>
       )}
 
-      {/* ── Modal: 36 Standard Casting Menus Catalogue Reference ─────────────── */}
+      {/* ── Modal: 59 Standard Casting Menus Catalogue Reference ─────────────── */}
       {showCatalogModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full border border-gray-200 overflow-hidden animate-scale-up max-h-[90vh] flex flex-col">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full border border-gray-200 overflow-hidden animate-scale-up max-h-[90vh] flex flex-col">
             <div className="px-6 py-4 bg-purple-50 border-b border-purple-100 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
                 <FiLayers className="w-5 h-5 text-purple-600" />
                 <div>
-                  <h3 className="text-sm font-black text-gray-900">Standard 36-Menu Casting Catalogue</h3>
-                  <p className="text-[10px] text-purple-700 font-medium">Official architecture reference for casting portal navigation</p>
+                  <h3 className="text-sm font-black text-gray-900">Standard 59-Menu Casting Architecture Catalogue</h3>
+                  <p className="text-[10px] text-purple-700 font-medium">Verified hierarchy with corrected frontend routes & dropdown containers</p>
                 </div>
               </div>
               <button onClick={() => setShowCatalogModal(false)} className="text-gray-400 hover:text-gray-600">
@@ -1066,17 +1278,18 @@ export default function MenuConfigPage() {
             </div>
 
             <div className="p-6 overflow-y-auto flex-1 space-y-4 text-xs">
-              <div className="flex items-center justify-between p-3 bg-purple-50 rounded-xl border border-purple-100">
+              <div className="flex items-center justify-between p-3.5 bg-purple-50 rounded-xl border border-purple-100">
                 <div>
-                  <p className="font-bold text-purple-900">Missing Standard Menus?</p>
-                  <p className="text-[11px] text-purple-700">Pre-populate all standard menus that are not yet created on the account service.</p>
+                  <p className="font-bold text-purple-900">Sync Catalogue & Correct Broken Routes</p>
+                  <p className="text-[11px] text-purple-700">Pre-populate all 59 standard menus and fix any divergent route paths or parent group relationships.</p>
                 </div>
                 <button
                   onClick={handleSeedStandardCatalogue}
                   disabled={Boolean(actionLoading)}
-                  className="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold shadow-xs transition shrink-0"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold shadow-xs transition shrink-0 flex items-center gap-1.5"
                 >
-                  Sync / Seed Missing Menus
+                  <FiRefreshCw className={`w-3.5 h-3.5 ${actionLoading === 'seed' ? 'animate-spin' : ''}`} />
+                  <span>Sync 59 Menus</span>
                 </button>
               </div>
 
@@ -1085,26 +1298,44 @@ export default function MenuConfigPage() {
                   <thead className="bg-gray-50 border-b border-gray-200 text-[10px] text-gray-500 uppercase font-black">
                     <tr>
                       <th className="p-2.5">menuId</th>
-                      <th className="p-2.5">Label & Path</th>
+                      <th className="p-2.5">Label & Icon</th>
+                      <th className="p-2.5">Type & Route Path</th>
                       <th className="p-2.5">Target Audience</th>
                       <th className="p-2.5 text-center">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 font-mono text-[11px]">
-                    {ALL_36_CASTING_MENUS.map(item => {
-                      const isInstalled = menus.some(m => m.menuId === item.menuId)
+                    {ALL_59_CASTING_MENUS.map(item => {
+                      const installed = menus.find(m => m.menuId === item.menuId)
+                      const isContainer = item.isContainer || !item.path
+                      const isChild = Boolean(item.parentMenuId)
+
                       return (
-                        <tr key={item.menuId} className="hover:bg-gray-50/50">
-                          <td className="p-2.5 font-bold text-purple-700">{item.menuId}</td>
+                        <tr key={item.menuId} className={`hover:bg-gray-50/50 ${isContainer ? 'bg-purple-50/30' : ''}`}>
+                          <td className="p-2.5 font-bold text-purple-700">
+                            {isChild && <span className="text-gray-400 mr-1">↳</span>}
+                            {item.menuId}
+                          </td>
                           <td className="p-2.5 font-sans">
                             <span className="font-bold text-gray-900">{item.icon} {item.label}</span>
-                            <p className="text-[10px] text-gray-400 font-mono">{item.path}</p>
+                            {item.parentMenuId && (
+                              <span className="ml-1.5 text-[10px] text-purple-600 font-mono">[{item.parentMenuId}]</span>
+                            )}
+                          </td>
+                          <td className="p-2.5">
+                            {isContainer ? (
+                              <span className="text-[10px] font-bold text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded font-sans">
+                                📁 Dropdown Container
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-gray-700 font-mono">{item.path}</span>
+                            )}
                           </td>
                           <td className="p-2.5 font-sans">
-                            <span className="text-[11px] text-gray-700 font-semibold">{item.description}</span>
+                            <span className="text-[10px] text-gray-600 font-semibold">{item.description}</span>
                           </td>
                           <td className="p-2.5 text-center font-sans">
-                            {isInstalled ? (
+                            {installed ? (
                               <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                                 Installed
                               </span>

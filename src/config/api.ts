@@ -272,6 +272,7 @@ export interface MenuConfigItem {
   icon?: string
   isActive: boolean
   order?: number
+  parentMenuId?: string | null
   platform: 'casting' | string
   allowedUserTypes?: string[]
   allowedWorkerTypes?: string[]
@@ -286,6 +287,7 @@ export interface MenuConfigItem {
   createdAt?: string
   updatedAt?: string
 }
+
 
 export const menuConfigAPI = {
   // Get all casting menus
