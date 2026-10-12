@@ -150,10 +150,14 @@ export const adminAPI = {
     request<any>('GET', C(`/admin/casting/subscriptions/${partyId}`)),
   assignSubscription: (partyId: string, body: { type: string; period: string; status: string }) =>
     request<any>('POST', C(`/admin/casting/subscriptions/${partyId}`), body),
+  updateSubscription: (partyId: string, body: { status?: string; type?: string; [k: string]: any }) =>
+    request<any>('PUT', C(`/admin/casting/subscriptions/${partyId}`), body),
   cancelSubscription: (partyId: string, reason: string) =>
     request<any>('DELETE', C(`/admin/casting/subscriptions/${partyId}`), { reason }),
   upgradeSubscription: (partyId: string, body: { newType: string; newPeriod: string }) =>
     request<any>('POST', C(`/admin/casting/subscriptions/${partyId}/upgrade`), body),
+  renewSubscription: (partyId: string, body: { period: string }) =>
+    request<any>('POST', C(`/admin/casting/subscriptions/${partyId}/renew`), body),
 
   // ── Casting Subscription Usage ────────────────────────────────────────────────
   getUsage: (partyId: string) =>
@@ -204,6 +208,8 @@ export const adminAPI = {
     request<any>('GET', C(`/replica-licenses/admin/licenses/${encodeURIComponent(licenseId)}/audit`)),
   expireOverdueApprovals: () =>
     request<any>('POST', C('/replica-licenses/admin/expire-approvals')),
+  expireOverdueLicenses: () =>
+    request<any>('POST', C('/replica-licenses/admin/expire-licenses')),
 
   // ── Digital Replica KYC & Verification ───────────────────────────────────────
   replicas: (params?: { kyc_status?: string; status?: string; page?: number; limit?: number }) =>
@@ -261,6 +267,29 @@ export const commissionAPI = {
     request<any>('GET', CC(`/commission/admin/wallet/party/${partyId}`)),
   getTransactions: (partyId: string, page = 1, limit = 20) =>
     request<any>('GET', `${CC(`/commission/admin/wallet/party/${partyId}/transactions`)}?page=${page}&limit=${limit}`),
+}
+
+// ── Unified Platform Subscriptions (Account Service) ──────────────────────────
+// These endpoints show casting subscriptions from the unified collection.
+// Writes (assign, upgrade, cancel) still go through adminAPI on casting-service.
+const ACCOUNT_BASE = API.ACCOUNT
+
+export const unifiedSubAPI = {
+  // List all casting subscriptions from unified collection
+  listCasting: (params?: { page?: number; limit?: number }) =>
+    request<any>('GET', `${ACCOUNT_BASE}/platform-subscriptions/admin/casting/list${params?.page ? `?page=${params.page}&limit=${params.limit ?? 20}` : ''}`),
+
+  // Get a single user's unified casting subscription
+  getCasting: (partyId: string) =>
+    request<any>('GET', `${ACCOUNT_BASE}/platform-subscriptions/admin/casting/${encodeURIComponent(partyId)}`),
+
+  // Summary stats for casting subscriptions
+  castingStats: () =>
+    request<any>('GET', `${ACCOUNT_BASE}/platform-subscriptions/admin/casting/stats/summary`),
+
+  // Stats across all platforms
+  allPlatformStats: () =>
+    request<any>('GET', `${ACCOUNT_BASE}/platform-subscriptions/admin/casting/stats/all-platforms`),
 }
 
 // ── Casting Menu Configuration (Account Service) ───────────────────────────────

@@ -7,7 +7,6 @@ import {
   FiMenu, FiX, FiChevronRight, FiCheckCircle, FiPackage, FiCreditCard,
   FiSliders, FiArrowDownCircle, FiUserCheck, FiCpu,
 } from 'react-icons/fi'
-
 const NAV = [
   { path: '/',                label: 'Dashboard',         icon: FiGrid },
   { path: '/users',           label: 'Users',             icon: FiUsers },
@@ -21,6 +20,7 @@ const NAV = [
   { path: '/bookings',        label: 'Bookings',          icon: FiBookmark },
   { path: '/avatar-licenses', label: 'Avatar Licenses',   icon: FiCpu },
   { path: '/replica-kyc',     label: 'Replica KYC',       icon: FiShield },
+  { path: '/replica-licenses',label: 'Replica Licenses',  icon: FiFilm },
   { path: '/menu-config',     label: 'Menu Config',       icon: FiSliders },
   { path: '/locations',       label: 'Locations',         icon: FiMapPin },
   { path: '/trust',           label: 'Trust & Reports',   icon: FiShield },
