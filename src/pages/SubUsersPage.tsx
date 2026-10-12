@@ -13,6 +13,7 @@ interface Sub {
   _id?: string
   party_id?: string
   partyId?: string
+  plan?: string
   type: string
   period: string
   status: string
@@ -129,7 +130,7 @@ export default function SubUsersPage() {
   const [singleUsage,  setSingleUsage]  = useState<Usage | null>(null)
 
   // action modals
-  const [modal, setModal] = useState<'assign' | 'upgrade' | 'cancel' | 'reset' | 'sync' | null>(null)
+  const [modal, setModal] = useState<'assign' | 'upgrade' | 'renew' | 'cancel' | 'reset' | 'sync' | null>(null)
   const [targetId, setTargetId] = useState('')
   const [actionForm, setActionForm] = useState({ type: 'growth', period: 'annual', status: 'active', reason: '', newType: 'professional', newPeriod: 'annual', subscriptionType: 'growth' })
   const [actioning, setActioning] = useState(false)
@@ -154,22 +155,27 @@ export default function SubUsersPage() {
         setPartyMap(pMap)
       }
 
-      const rawList = res.status === 'fulfilled' ? (Array.isArray(res.value) ? res.value : res.value?.data || []) : []
+      const resVal: any = res.status === 'fulfilled' ? res.value : {}
+      const rawList: any[] = Array.isArray(resVal) ? resVal : (resVal?.data || [])
       const data: Sub[] = rawList.map((item: any) => {
         const partyId = item.party_id || item.partyId || item._id || ''
         const expiry = item.expires_at ?? item.expiresAt ?? item.endDate
         const daysLeft = item.daysRemaining !== undefined ? item.daysRemaining : calculateDaysLeft(expiry)
+        const planName = item.plan || item.type || ''
         return {
           ...item,
           partyId,
           party_id: partyId,
+          plan: planName,
+          type: planName,
           daysRemaining: daysLeft ?? undefined,
         }
       })
       setSubs(data)
-      const pg = res.status === 'fulfilled' ? (res.value?.pagination || res.value?.meta || {}) : {}
-      setTotal(pg.total || data.length)
-      setPages(Math.max(1, pg.pages || pg.totalPages || Math.ceil((pg.total || data.length) / PAGE_SIZE)))
+      const totalCount = resVal?.total ?? resVal?.pagination?.total ?? resVal?.meta?.total ?? data.length
+      const pageCount = resVal?.pages ?? resVal?.pagination?.pages ?? resVal?.meta?.totalPages ?? Math.ceil(totalCount / PAGE_SIZE)
+      setTotal(totalCount)
+      setPages(Math.max(1, pageCount))
     } catch {}
     setLoading(false)
   }
@@ -210,12 +216,16 @@ export default function SubUsersPage() {
           await adminAPI.upgradeSubscription(targetId, { newType: actionForm.newType, newPeriod: actionForm.newPeriod })
           setActionMsg('Upgraded ✓')
           break
+        case 'renew':
+          await adminAPI.renewSubscription(targetId, { period: actionForm.period })
+          setActionMsg('Subscription renewed ✓')
+          break
         case 'cancel':
           await adminAPI.cancelSubscription(targetId, actionForm.reason)
           setActionMsg('Subscription cancelled ✓')
           break
         case 'reset':
-          await adminAPI.resetUsage(targetId, actionForm.subscriptionType)
+          await adminAPI.resetUsage(targetId)
           setActionMsg('Usage counters reset ✓')
           break
         case 'sync':
@@ -319,6 +329,10 @@ export default function SubUsersPage() {
                   <button onClick={() => openModal('upgrade', pId)}
                     className="flex items-center gap-1 px-2.5 py-1.5 bg-purple-50 border border-purple-200 text-purple-700 rounded-lg text-[10px] font-bold hover:bg-purple-100 transition">
                     <FiArrowUp className="w-3 h-3" /> Upgrade
+                  </button>
+                  <button onClick={() => openModal('renew',   pId)}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-[10px] font-bold hover:bg-emerald-100 transition">
+                    <FiRefreshCw className="w-3 h-3" /> Renew
                   </button>
                   <button onClick={() => openModal('reset',   pId)}
                     className="flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg text-[10px] font-bold hover:bg-blue-100 transition">
@@ -451,6 +465,10 @@ export default function SubUsersPage() {
                       className="p-1.5 text-purple-500 hover:bg-purple-50 rounded-lg transition" title="Upgrade">
                       <FiArrowUp className="w-3.5 h-3.5" />
                     </button>
+                    <button onClick={() => openModal('renew',   pId)}
+                      className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition" title="Renew">
+                      <FiRefreshCw className="w-3.5 h-3.5" />
+                    </button>
                     <button onClick={() => openModal('cancel',  pId)}
                       className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition" title="Cancel">
                       <FiTrash2 className="w-3.5 h-3.5" />
@@ -472,6 +490,7 @@ export default function SubUsersPage() {
               <h3 className="font-black text-gray-900 text-sm">
                 {modal === 'assign'  && 'Assign Subscription'}
                 {modal === 'upgrade' && 'Upgrade Subscription'}
+                {modal === 'renew'   && 'Renew Subscription'}
                 {modal === 'cancel'  && 'Cancel Subscription'}
                 {modal === 'reset'   && 'Reset Usage Counters'}
                 {modal === 'sync'    && 'Sync Plan Limits'}
@@ -524,6 +543,19 @@ export default function SubUsersPage() {
                 <div>
                   <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">New Period</label>
                   <select value={actionForm.newPeriod} onChange={e => setAf('newPeriod', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-orange-400">
+                    {PERIODS.map(p => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {modal === 'renew' && (
+              <div className="space-y-3">
+                <p className="text-xs text-gray-600">Extends user's current subscription expiry with no payment required.</p>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Renewal Period</label>
+                  <select value={actionForm.period} onChange={e => setAf('period', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-orange-400">
                     {PERIODS.map(p => <option key={p} value={p}>{p}</option>)}
                   </select>

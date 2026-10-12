@@ -42,6 +42,9 @@ const C = (path: string, qs?: Record<string, string | number | undefined>) => {
   return s ? `${url}?${s}` : url
 }
 
+// ── Account-service URL builder ───────────────────────────────────────────────
+const A = (path: string) => `${API.ACCOUNT}${path}`
+
 export const adminAPI = {
   // ── Dashboard ────────────────────────────────────────────────────────────────
   stats: () =>
@@ -121,49 +124,64 @@ export const adminAPI = {
   deleteCompany: (companyId: string) =>
     request<any>('DELETE', C(`/admin/companies/${companyId}`)),
 
-  // ── Casting Subscription Plans (catalog) ─────────────────────────────────────
-  subPlans: (qs?: { isActive?: boolean; audience?: string }) =>
-    request<any>('GET', C('/admin/casting/subscription-options', {
-      isActive: qs?.isActive !== undefined ? String(qs.isActive) as any : undefined,
-      audience: qs?.audience,
-    })),
+  // ── Casting Subscription Plans — NOW on account-service ──────────────────────
+  // All /admin/casting/subscription-options/* endpoints removed from casting-service.
+  // Replaced by /platform-subscriptions/admin/casting/options/* on account-service.
+  // These methods now route to account-service via A() helper.
+  subPlans: (qs?: { isActive?: boolean; audience?: string }) => {
+    const params = new URLSearchParams()
+    if (qs?.isActive !== undefined) params.set('active', String(qs.isActive))
+    if (qs?.audience) params.set('audience', qs.audience)
+    const qStr = params.toString() ? `?${params}` : ''
+    return request<any>('GET', A(`/platform-subscriptions/admin/casting/options/list${qStr}`))
+  },
   subPlanStats: () =>
-    request<any>('GET', C('/admin/casting/subscription-options/stats')),
+    request<any>('GET', A('/platform-subscriptions/admin/casting/options/stats')),
+  getSubPlan: (id: string) =>
+    request<any>('GET', A(`/platform-subscriptions/admin/casting/options/${encodeURIComponent(id)}`)),
   createSubPlan: (body: any) =>
-    request<any>('POST', C('/admin/casting/subscription-options'), body),
+    request<any>('POST', A('/platform-subscriptions/admin/casting/options'), body),
   updateSubPlan: (id: string, body: any) =>
-    request<any>('PUT', C(`/admin/casting/subscription-options/${id}`), body),
+    request<any>('PUT', A(`/platform-subscriptions/admin/casting/options/${encodeURIComponent(id)}`), body),
   toggleSubPlan: (id: string) =>
-    request<any>('PUT', C(`/admin/casting/subscription-options/${id}/toggle-active`)),
+    request<any>('PUT', A(`/platform-subscriptions/admin/casting/options/${encodeURIComponent(id)}/toggle-active`)),
   deleteSubPlan: (id: string) =>
-    request<any>('DELETE', C(`/admin/casting/subscription-options/${id}`)),
+    request<any>('DELETE', A(`/platform-subscriptions/admin/casting/options/${encodeURIComponent(id)}`)),
 
-  // ── Casting User Subscriptions ────────────────────────────────────────────────
-  castingSubscriptions: (qs?: { type?: string; status?: string; page?: number; limit?: number }) =>
-    request<any>('GET', C('/admin/casting/subscriptions', {
-      type:   qs?.type,
-      status: qs?.status,
-      page:   qs?.page,
-      limit:  qs?.limit ?? 20,
-    })),
+  // ── Casting User Subscriptions — NOW on account-service ───────────────────────
+  // All /admin/casting/subscriptions/* endpoints removed from casting-service.
+  // Replaced by /platform-subscriptions/admin/casting/* on account-service.
+  castingSubscriptions: (qs?: { type?: string; status?: string; plan?: string; page?: number; limit?: number }) => {
+    const params = new URLSearchParams()
+    if (qs?.status && qs.status !== 'all') params.set('status', qs.status)
+    if (qs?.plan) params.set('plan', qs.plan)
+    if (qs?.type) params.set('plan', qs.type)  // 'type' was the old field name, maps to 'plan'
+    if (qs?.page) params.set('page', String(qs.page))
+    params.set('limit', String(qs?.limit ?? 20))
+    return request<any>('GET', A(`/platform-subscriptions/admin/casting/list?${params}`))
+  },
   getUserSubscription: (partyId: string) =>
-    request<any>('GET', C(`/admin/casting/subscriptions/${partyId}`)),
-  assignSubscription: (partyId: string, body: { type: string; period: string; status: string }) =>
-    request<any>('POST', C(`/admin/casting/subscriptions/${partyId}`), body),
-  updateSubscription: (partyId: string, body: { status?: string; type?: string; [k: string]: any }) =>
-    request<any>('PUT', C(`/admin/casting/subscriptions/${partyId}`), body),
-  cancelSubscription: (partyId: string, reason: string) =>
-    request<any>('DELETE', C(`/admin/casting/subscriptions/${partyId}`), { reason }),
-  upgradeSubscription: (partyId: string, body: { newType: string; newPeriod: string }) =>
-    request<any>('POST', C(`/admin/casting/subscriptions/${partyId}/upgrade`), body),
-  renewSubscription: (partyId: string, body: { period: string }) =>
-    request<any>('POST', C(`/admin/casting/subscriptions/${partyId}/renew`), body),
+    request<any>('GET', A(`/platform-subscriptions/admin/casting/${encodeURIComponent(partyId)}`)),
+  assignSubscription: (partyId: string, body: { type?: string; plan?: string; period: string; status: string; [k: string]: any }) =>
+    // body.type → body.plan normalisation
+    request<any>('POST', A(`/platform-subscriptions/admin/casting/${encodeURIComponent(partyId)}`),
+      { ...body, plan: body.plan || body.type }),
+  updateSubscription: (partyId: string, body: { status?: string; type?: string; plan?: string; [k: string]: any }) =>
+    request<any>('PUT', A(`/platform-subscriptions/admin/casting/${encodeURIComponent(partyId)}`),
+      { ...body, ...(body.type && !body.plan ? { plan: body.type } : {}) }),
+  cancelSubscription: (partyId: string, reason?: string) =>
+    request<any>('DELETE', A(`/platform-subscriptions/admin/casting/${encodeURIComponent(partyId)}`),
+      reason ? { reason } : undefined),
+  upgradeSubscription: (partyId: string, body: { newType: string; newPeriod?: string }) =>
+    request<any>('POST', A(`/platform-subscriptions/admin/casting/${encodeURIComponent(partyId)}/upgrade`), body),
+  renewSubscription: (partyId: string, body?: { period?: string }) =>
+    request<any>('POST', A(`/platform-subscriptions/admin/casting/${encodeURIComponent(partyId)}/renew`), body || {}),
 
-  // ── Casting Subscription Usage ────────────────────────────────────────────────
+  // ── Casting Subscription Usage — UNCHANGED in casting-service ─────────────────
   getUsage: (partyId: string) =>
     request<any>('GET', C(`/admin/casting/subscription-usage/${partyId}`)),
-  resetUsage: (partyId: string, subscriptionType: string) =>
-    request<any>('POST', C(`/admin/casting/subscription-usage/${partyId}/reset`), { subscriptionType }),
+  resetUsage: (partyId: string) =>
+    request<any>('POST', C(`/admin/casting/subscription-usage/${partyId}/reset`)),
   syncLimits: (partyId: string) =>
     request<any>('POST', C(`/admin/casting/subscription-usage/${partyId}/sync-limits`)),
   syncAllLimits: (planId: string) =>
