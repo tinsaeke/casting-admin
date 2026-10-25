@@ -99,6 +99,7 @@ export const ALL_59_CASTING_MENUS: Array<{
   { menuId: 'employer-locations',       path: '/casting/locations',              label: 'Film Locations',          icon: '📍', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'content_creator'], order: 222, description: 'Scout filming venues' },
   { menuId: 'employer-studios',         path: '/casting/studios',                label: 'Production Studios',      icon: '🎥', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'content_creator'], order: 223, description: 'Book soundstages & gear' },
   { menuId: 'employer-academies',       path: '/casting/academies',              label: 'Acting Academies',        icon: '🏫', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'content_creator'], order: 224, description: 'Discover academy students' },
+  { menuId: 'employer-equipment',       path: '/casting/equipment',              label: 'Browse Equipment',        icon: '📷', parentMenuId: 'employer-discover', allowedUserTypes: ['employer', 'content_creator'], order: 225, description: 'Rent cameras, lighting & production gear' },
 
   // Employer: AI Tools Group
   { menuId: 'employer-ai-tools',        path: '',                                label: 'AI Tools',                icon: '⚡', allowedUserTypes: ['employer', 'content_creator'], order: 230, description: 'AI tools dropdown container', isContainer: true },
@@ -120,12 +121,14 @@ export const ALL_59_CASTING_MENUS: Array<{
   { menuId: 'agency-talent-search',     path: '/casting/talent-search',          label: 'Talent Search',           icon: '🔍', parentMenuId: 'agency-manage', allowedUserTypes: ['agency', 'cast_agency'], order: 322, description: 'Search talents' },
   { menuId: 'agency-call-sheets',       path: '/casting/call-sheets',            label: 'Call Sheets',             icon: '📝', parentMenuId: 'agency-manage', allowedUserTypes: ['agency', 'cast_agency'], order: 323, description: 'Call sheets' },
   { menuId: 'agency-wallet',            path: '/casting/wallet',                 label: 'Agency Wallet',           icon: '💰', parentMenuId: 'agency-manage', allowedUserTypes: ['agency', 'cast_agency'], order: 324, description: 'Agency revenue & commission wallet' },
+  { menuId: 'agency-equipment',         path: '/casting/equipment',              label: 'Browse Equipment',        icon: '📷', parentMenuId: 'agency-manage', allowedUserTypes: ['agency', 'cast_agency'], order: 325, description: 'Rent cameras, lighting & production gear' },
 
 
   // ── 4. Production Crew Role ──
   { menuId: 'crew-dashboard',           path: '/casting/crew-dashboard',         label: 'Crew Dashboard',          icon: '🛠️', allowedUserTypes: ['production_crew'], order: 400, description: 'Technical crew workspace' },
   { menuId: 'crew-profile-setup',       path: '/casting/crew-profile-setup',     label: 'Crew Setup',              icon: '⚙️', allowedUserTypes: ['production_crew'], order: 410, description: 'Crew credits, gear & rates' },
   { menuId: 'crew-call-sheets',         path: '/casting/call-sheets',            label: 'Call Sheets',             icon: '📋', allowedUserTypes: ['production_crew'], order: 420, description: 'Production call sheets' },
+  { menuId: 'crew-equipment',           path: '/casting/equipment',              label: 'Browse Equipment',        icon: '📷', allowedUserTypes: ['production_crew'], order: 430, description: 'Rent cameras, lighting & production gear' },
 
   // ── 5. Location Scout Role ──
   { menuId: 'scout-my-locations',       path: '/casting/my-locations',           label: 'My Locations',            icon: '🗺️', allowedUserTypes: ['location_scout'], order: 500, description: 'Scouted location listing management' },
@@ -167,6 +170,7 @@ export const ALL_59_CASTING_MENUS: Array<{
   { menuId: 'studio-search-talent',     path: '/casting/talent-search',          label: 'Talent Search',           icon: '🔍', parentMenuId: 'studio-discover', allowedUserTypes: ['studio_provider'], order: 842, description: 'Talent search' },
   { menuId: 'studio-locations',         path: '/casting/locations',              label: 'Browse Locations',        icon: '📍', parentMenuId: 'studio-discover', allowedUserTypes: ['studio_provider'], order: 843, description: 'Locations' },
   { menuId: 'studio-find-studios',      path: '/casting/studios',                label: 'Find Studios',            icon: '🎥', parentMenuId: 'studio-discover', allowedUserTypes: ['studio_provider'], order: 844, description: 'Studios' },
+  { menuId: 'studio-equipment',         path: '/casting/equipment',              label: 'Browse Equipment',        icon: '📷', parentMenuId: 'studio-discover', allowedUserTypes: ['studio_provider'], order: 845, description: 'Rent cameras, lighting & production gear' },
 
   // ── 9. Equipment Provider Role ──────────────────────────────────────────────────────────
   { menuId: 'equipment-dashboard',      path: '/casting/equipment',              label: 'Equipment Marketplace',   icon: '📷', allowedUserTypes: ['equipment_provider'], order: 900, description: 'Browse & manage equipment listings' },
