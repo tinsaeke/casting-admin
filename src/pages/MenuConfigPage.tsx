@@ -23,6 +23,7 @@ const ROLE_OPTIONS = [
   { id: 'location_scout',     label: 'Location Scout',       color: 'bg-teal-100 text-teal-800 border-teal-200' },
   { id: 'aggregator_scout',   label: 'Aggregator Scout',     color: 'bg-rose-100 text-rose-800 border-rose-200' },
   { id: 'academy',            label: 'Academy',              color: 'bg-violet-100 text-violet-800 border-violet-200' },
+  { id: 'equipment_provider', label: 'Equipment Provider',   color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
 ]
 
 const SUBSCRIPTION_TIERS = [
@@ -166,6 +167,17 @@ export const ALL_59_CASTING_MENUS: Array<{
   { menuId: 'studio-search-talent',     path: '/casting/talent-search',          label: 'Talent Search',           icon: '🔍', parentMenuId: 'studio-discover', allowedUserTypes: ['studio_provider'], order: 842, description: 'Talent search' },
   { menuId: 'studio-locations',         path: '/casting/locations',              label: 'Browse Locations',        icon: '📍', parentMenuId: 'studio-discover', allowedUserTypes: ['studio_provider'], order: 843, description: 'Locations' },
   { menuId: 'studio-find-studios',      path: '/casting/studios',                label: 'Find Studios',            icon: '🎥', parentMenuId: 'studio-discover', allowedUserTypes: ['studio_provider'], order: 844, description: 'Studios' },
+
+  // ── 9. Equipment Provider Role ──────────────────────────────────────────────────────────
+  { menuId: 'equipment-dashboard',      path: '/casting/equipment',              label: 'Equipment Marketplace',   icon: '📷', allowedUserTypes: ['equipment_provider'], order: 900, description: 'Browse & manage equipment listings' },
+  // Equipment: My Gear Group
+  { menuId: 'equipment-group',          path: '',                                label: 'My Equipment',            icon: '🎥', allowedUserTypes: ['equipment_provider'], order: 910, description: 'Equipment management dropdown', isContainer: true },
+  { menuId: 'equipment-my-listings',    path: '/casting/equipment?tab=mine',     label: 'My Listings',             icon: '📋', parentMenuId: 'equipment-group', allowedUserTypes: ['equipment_provider'], order: 911, description: 'Manage your gear listings' },
+  { menuId: 'equipment-list-new',       path: '/casting/equipment',              label: 'List Equipment',          icon: '➕', parentMenuId: 'equipment-group', allowedUserTypes: ['equipment_provider'], order: 912, description: 'Add a new equipment listing' },
+  // Equipment: Browse
+  { menuId: 'equipment-browse',         path: '/casting/equipment',              label: 'Browse Gear',             icon: '🔍', allowedUserTypes: ['equipment_provider'], order: 920, description: 'Discover equipment from others' },
+  // Equipment: Career Coach (shared)
+  { menuId: 'equipment-career-coach',   path: '/career-coach',                   label: 'Career Coach',            icon: '💡', allowedUserTypes: ['equipment_provider'], order: 990, description: 'AI Career Intelligence' },
 ]
 
 export default function MenuConfigPage() {
