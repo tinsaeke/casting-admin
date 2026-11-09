@@ -14,11 +14,12 @@ export default defineConfig({
     port: 3020,
     host: true,
     proxy: {
-      // Proxy /llm-gateway/* → real gateway on server (avoids CORS in local dev)
+      // Proxy /llm-gateway/* → public nginx proxy on admin.besewonline.com
+      // This avoids CORS in local dev without needing direct server port access
       '/llm-gateway': {
-        target: 'http://196.188.240.111:1218',
+        target: 'https://admin.besewonline.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/llm-gateway/, ''),
+        secure: true,
       },
     },
   },
