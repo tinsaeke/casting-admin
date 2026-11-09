@@ -2,8 +2,12 @@ export const API = {
   CASTING:     'https://casting.besewonline.com/api',
   PARTY:       'https://party.besewonline.com',
   ACCOUNT:     'https://account.besewonline.com',
-  LLM_GATEWAY: 'https://llmgateway.besewonline.com',
+  LLM_GATEWAY: 'https://admin.besewonline.com',
 }
+
+// In local dev (localhost) use relative path so Vite proxy handles it.
+// In production (admin.besewonline.com) the /llm-gateway/ path is proxied by nginx.
+const isLocalDev = typeof window !== 'undefined' && window.location.hostname === 'localhost'
 
 export function getToken(): string {
   return localStorage.getItem('admin_token') || ''
@@ -379,57 +383,83 @@ export const menuConfigAPI = {
 }
 
 
-// ── LLM Gateway admin key (stored in localStorage by admin on first login) ───
+// ── LLM Gateway admin key (fixed platform key, not the admin JWT) ────────────
 export const LLM_ADMIN_KEY = 'besew-llm-gateway-admin-key'
-const LLM = () => `${API.LLM_GATEWAY}/llm-gateway`
+const LLM = () => isLocalDev
+  ? '/llm-gateway'                                // Vite proxy → gateway direct
+  : `${API.LLM_GATEWAY}/llm-gateway`             // nginx proxy on admin.besewonline.com
+
+function llmHeaders(): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${LLM_ADMIN_KEY}`,
+  }
+}
+
+async function llmRequest<T>(method: string, url: string, body?: unknown): Promise<T> {
+  const res = await fetch(url, {
+    method,
+    headers: llmHeaders(),
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  })
+  const text = await res.text()
+  const data = text ? JSON.parse(text) : {}
+  if (!res.ok) {
+    throw Object.assign(
+      new Error(Array.isArray(data?.message) ? data.message.join(', ') : data?.message || `HTTP ${res.status}`),
+      { status: res.status },
+    )
+  }
+  return data as T
+}
 
 export const llmGatewayAPI = {
   // ── Model Pricing ────────────────────────────────────────────────────────
   getPricing: () =>
-    request<{ pricing: ModelPricing[]; formula: string; examples: any[] }>(
+    llmRequest<{ pricing: ModelPricing[]; formula: string; examples: any[] }>(
       'GET', `${LLM()}/admin/pricing`,
     ),
   updatePricing: (model: string, data: Partial<ModelPricing>) =>
-    request<{ message: string; pricing: ModelPricing; effective: string }>(
+    llmRequest<{ message: string; pricing: ModelPricing; effective: string }>(
       'PATCH', `${LLM()}/admin/pricing/${encodeURIComponent(model)}`, data,
     ),
   addPricing: (data: { model: string; provider: string; multiplier: number; description?: string }) =>
-    request<{ message: string; pricing: ModelPricing }>(
+    llmRequest<{ message: string; pricing: ModelPricing }>(
       'POST', `${LLM()}/admin/pricing`, data,
     ),
   deletePricing: (model: string) =>
-    request<{ message: string }>(
+    llmRequest<{ message: string }>(
       'DELETE', `${LLM()}/admin/pricing/${encodeURIComponent(model)}`,
     ),
   estimateCredits: (model: string, tokens: number) =>
-    request<{ model: string; tokens: number; credits: number; formula: string }>(
+    llmRequest<{ model: string; tokens: number; credits: number; formula: string }>(
       'GET', `${LLM()}/admin/credits/estimate?model=${encodeURIComponent(model)}&tokens=${tokens}`,
     ),
 
   // ── User credits ─────────────────────────────────────────────────────────
   getUserCredits: (partyId: string) =>
-    request<CreditBalance>('GET', `${LLM()}/admin/credits/${encodeURIComponent(partyId)}`),
+    llmRequest<CreditBalance>('GET', `${LLM()}/admin/credits/${encodeURIComponent(partyId)}`),
   grantCredits: (partyId: string, amount: number, reason?: string) =>
-    request<{ message: string; new_balance: number; granted: number }>(
+    llmRequest<{ message: string; new_balance: number; granted: number }>(
       'POST', `${LLM()}/admin/credits/${encodeURIComponent(partyId)}/grant`,
       { amount, reason },
     ),
   setMonthlyGrant: (partyId: string, amount: number) =>
-    request<{ message: string; custom_monthly_grant: number }>(
+    llmRequest<{ message: string; custom_monthly_grant: number }>(
       'PATCH', `${LLM()}/admin/credits/${encodeURIComponent(partyId)}/monthly-grant`,
       { amount },
     ),
   runMonthlyGrants: () =>
-    request<{ message: string }>('POST', `${LLM()}/admin/credits/monthly-grants/run`, {}),
+    llmRequest<{ message: string }>('POST', `${LLM()}/admin/credits/monthly-grants/run`, {}),
 
   // ── Usage reporting ───────────────────────────────────────────────────────
   getAllUsage: (month?: string, limit = 50) =>
-    request<UsageSummary>(
+    llmRequest<UsageSummary>(
       'GET',
       `${LLM()}/admin/usage?limit=${limit}${month ? `&month=${month}` : ''}`,
     ),
   getUserUsage: (partyId: string) =>
-    request<UserUsageDetail>('GET', `${LLM()}/admin/usage/${encodeURIComponent(partyId)}`),
+    llmRequest<UserUsageDetail>('GET', `${LLM()}/admin/usage/${encodeURIComponent(partyId)}`),
 }
 
 // ── Types ────────────────────────────────────────────────────────────────────
