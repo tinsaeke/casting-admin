@@ -5,14 +5,14 @@ import {
   FiGrid, FiUsers, FiFilm, FiFolder, FiUser, FiBriefcase,
   FiVideo, FiBookmark, FiMapPin, FiShield, FiLogOut,
   FiMenu, FiX, FiChevronRight, FiCheckCircle, FiPackage, FiCreditCard,
-  FiSliders, FiArrowDownCircle, FiUserCheck, FiCpu,
+  FiSliders, FiArrowDownCircle, FiUserCheck, FiCpu, FiZap, FiActivity,
 } from 'react-icons/fi'
 const NAV = [
-  { path: '/',                label: 'Dashboard',         icon: FiGrid },
-  { path: '/users',           label: 'Users',             icon: FiUsers },
-  { path: '/role-requests',   label: 'Role Requests',     icon: FiUserCheck },
-  { path: '/cast-calls',      label: 'Cast Calls',        icon: FiFilm },
-  { path: '/productions',     label: 'Productions',       icon: FiFolder },
+  { path: '/',                  label: 'Dashboard',         icon: FiGrid },
+  { path: '/users',             label: 'Users',             icon: FiUsers },
+  { path: '/role-requests',     label: 'Role Requests',     icon: FiUserCheck },
+  { path: '/cast-calls',        label: 'Cast Calls',        icon: FiFilm },
+  { path: '/productions',       label: 'Productions',       icon: FiFolder },
   { path: '/talents',         label: 'Talents',           icon: FiUser },
   { path: '/agencies',        label: 'Agencies',          icon: FiBriefcase },
   { path: '/companies',       label: 'Companies',         icon: FiCheckCircle },
@@ -26,8 +26,10 @@ const NAV = [
   { path: '/trust',           label: 'Trust & Reports',   icon: FiShield },
   { path: '/sub-plans',       label: 'Sub Plans',         icon: FiPackage },
   { path: '/sub-users',       label: 'Subscriptions',     icon: FiCreditCard },
-  { path: '/platform-fees',   label: 'Platform Fees',     icon: FiSliders },
-  { path: '/withdrawals',     label: 'Withdrawals',       icon: FiArrowDownCircle },
+  { path: '/platform-fees',     label: 'Platform Fees',     icon: FiSliders },
+  { path: '/withdrawals',       label: 'Withdrawals',       icon: FiArrowDownCircle },
+  { path: '/ai-usage',          label: 'AI Usage',          icon: FiActivity },
+  { path: '/ai-model-pricing',  label: 'AI Model Pricing',  icon: FiZap },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

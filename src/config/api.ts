@@ -1,7 +1,8 @@
 export const API = {
-  CASTING:  'https://casting.besewonline.com/api',
-  PARTY:    'https://party.besewonline.com',
-  ACCOUNT:  'https://account.besewonline.com',
+  CASTING:     'https://casting.besewonline.com/api',
+  PARTY:       'https://party.besewonline.com',
+  ACCOUNT:     'https://account.besewonline.com',
+  LLM_GATEWAY: 'https://llmgateway.besewonline.com',
 }
 
 export function getToken(): string {
@@ -377,3 +378,108 @@ export const menuConfigAPI = {
     request<any>('POST', `${API.ACCOUNT}/api/v1/menu-config/bulk-update`, updates),
 }
 
+
+// ── LLM Gateway admin key (stored in localStorage by admin on first login) ───
+export const LLM_ADMIN_KEY = 'besew-llm-gateway-admin-key'
+const LLM = () => `${API.LLM_GATEWAY}/llm-gateway`
+
+export const llmGatewayAPI = {
+  // ── Model Pricing ────────────────────────────────────────────────────────
+  getPricing: () =>
+    request<{ pricing: ModelPricing[]; formula: string; examples: any[] }>(
+      'GET', `${LLM()}/admin/pricing`,
+    ),
+  updatePricing: (model: string, data: Partial<ModelPricing>) =>
+    request<{ message: string; pricing: ModelPricing; effective: string }>(
+      'PATCH', `${LLM()}/admin/pricing/${encodeURIComponent(model)}`, data,
+    ),
+  addPricing: (data: { model: string; provider: string; multiplier: number; description?: string }) =>
+    request<{ message: string; pricing: ModelPricing }>(
+      'POST', `${LLM()}/admin/pricing`, data,
+    ),
+  deletePricing: (model: string) =>
+    request<{ message: string }>(
+      'DELETE', `${LLM()}/admin/pricing/${encodeURIComponent(model)}`,
+    ),
+  estimateCredits: (model: string, tokens: number) =>
+    request<{ model: string; tokens: number; credits: number; formula: string }>(
+      'GET', `${LLM()}/admin/credits/estimate?model=${encodeURIComponent(model)}&tokens=${tokens}`,
+    ),
+
+  // ── User credits ─────────────────────────────────────────────────────────
+  getUserCredits: (partyId: string) =>
+    request<CreditBalance>('GET', `${LLM()}/admin/credits/${encodeURIComponent(partyId)}`),
+  grantCredits: (partyId: string, amount: number, reason?: string) =>
+    request<{ message: string; new_balance: number; granted: number }>(
+      'POST', `${LLM()}/admin/credits/${encodeURIComponent(partyId)}/grant`,
+      { amount, reason },
+    ),
+  setMonthlyGrant: (partyId: string, amount: number) =>
+    request<{ message: string; custom_monthly_grant: number }>(
+      'PATCH', `${LLM()}/admin/credits/${encodeURIComponent(partyId)}/monthly-grant`,
+      { amount },
+    ),
+  runMonthlyGrants: () =>
+    request<{ message: string }>('POST', `${LLM()}/admin/credits/monthly-grants/run`, {}),
+
+  // ── Usage reporting ───────────────────────────────────────────────────────
+  getAllUsage: (month?: string, limit = 50) =>
+    request<UsageSummary>(
+      'GET',
+      `${LLM()}/admin/usage?limit=${limit}${month ? `&month=${month}` : ''}`,
+    ),
+  getUserUsage: (partyId: string) =>
+    request<UserUsageDetail>('GET', `${LLM()}/admin/usage/${encodeURIComponent(partyId)}`),
+}
+
+// ── Types ────────────────────────────────────────────────────────────────────
+export interface ModelPricing {
+  _id: string
+  model_name: string
+  provider: string
+  multiplier: number
+  description: string
+  enabled: boolean
+  updated_by?: string
+  updatedAt?: string
+}
+
+export interface CreditBalance {
+  party_id: string
+  balance: number
+  lifetime_earned: number
+  lifetime_spent: number
+  last_grant_month: string
+  custom_monthly_grant?: number
+}
+
+export interface UsageSummary {
+  month: string
+  summary: {
+    total_users: number
+    total_requests: number
+    total_tokens: number
+    total_cost_usd: number
+    total_credits: number
+  }
+  users: UserMonthly[]
+}
+
+export interface UserMonthly {
+  party_id: string
+  month: string
+  total_requests: number
+  total_tokens: number
+  total_cost_usd: number
+  total_credits: number
+  by_service: Record<string, number>
+  by_model: Record<string, number>
+  by_provider: Record<string, number>
+}
+
+export interface UserUsageDetail {
+  party_id: string
+  months: UserMonthly[]
+  override: any
+  credit_balance: CreditBalance
+}

@@ -25,6 +25,8 @@ const AvatarLicensesPage = lazy(() => import('@/pages/AvatarLicensesPage'))
 const ReplicaKycPage      = lazy(() => import('@/pages/ReplicaKycPage'))
 const ReplicaLicensesPage = lazy(() => import('@/pages/ReplicaLicensesPage'))
 const MenuConfigPage      = lazy(() => import('@/pages/MenuConfigPage'))
+const AiModelPricingPage  = lazy(() => import('@/pages/AiModelPricingPage'))
+const AiUsagePage         = lazy(() => import('@/pages/AiUsagePage'))
 
 const Spin = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -62,6 +64,8 @@ function AppRoutes() {
                 <Route path="/replica-kyc"     element={<ReplicaKycPage />} />
                 <Route path="/replica-licenses" element={<ReplicaLicensesPage />} />
                 <Route path="/menu-config"     element={<MenuConfigPage />} />
+                <Route path="/ai-model-pricing" element={<AiModelPricingPage />} />
+                <Route path="/ai-usage"         element={<AiUsagePage />} />
                 <Route path="/locations"       element={<LocationsPage />} />
                 <Route path="/trust"           element={<TrustPage />} />
                 <Route path="/sub-plans"       element={<SubPlansPage />} />
