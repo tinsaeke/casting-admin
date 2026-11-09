@@ -30,6 +30,12 @@ interface Plan {
   maxLocationScouting: number
   maxVideoGenerations?: number
   extraQuotas?: Record<string, number>
+  maxJobPosts?: number
+  maxRecruiterAccounts?: number
+  maxPsychometricAssessments?: number
+  maxAiCredits?: number
+  maxCoachSessions?: number
+  maxJobApplications?: number
   createdAt?: string
   updatedAt?: string
 }
@@ -102,6 +108,12 @@ interface FormState {
   maxBookings: number
   maxLocationScouting: number
   maxVideoGenerations: number
+  maxJobPosts: number
+  maxRecruiterAccounts: number
+  maxPsychometricAssessments: number
+  maxAiCredits: number
+  maxCoachSessions: number
+  maxJobApplications: number
   extraQuotas: string    // JSON textarea
 }
 
@@ -112,6 +124,8 @@ const EMPTY_FORM: FormState = {
   maxCastingCalls: 10, maxAuditionReviews: 100, maxAiScriptAnalyses: 10,
   maxTalentSearches: 200, maxBookings: 20, maxLocationScouting: 30,
   maxVideoGenerations: 30,
+  maxJobPosts: 0, maxRecruiterAccounts: 0, maxPsychometricAssessments: 0,
+  maxAiCredits: 0, maxCoachSessions: 0, maxJobApplications: 0,
   extraQuotas: '',
 }
 
@@ -379,6 +393,12 @@ export default function SubPlansPage() {
       maxBookings:         p.maxBookings ?? 0,
       maxLocationScouting: p.maxLocationScouting ?? 0,
       maxVideoGenerations: p.maxVideoGenerations ?? 0,
+      maxJobPosts:                p.maxJobPosts ?? 0,
+      maxRecruiterAccounts:       p.maxRecruiterAccounts ?? 0,
+      maxPsychometricAssessments: p.maxPsychometricAssessments ?? 0,
+      maxAiCredits:               p.maxAiCredits ?? 0,
+      maxCoachSessions:           p.maxCoachSessions ?? 0,
+      maxJobApplications:         p.maxJobApplications ?? 0,
       extraQuotas: p.extraQuotas ? JSON.stringify(p.extraQuotas, null, 2) : '',
     })
     if (!typeList.includes(p.type))     setTypeList(prev => [...prev, p.type])
@@ -413,6 +433,12 @@ export default function SubPlansPage() {
         maxBookings:         form.maxBookings,
         maxLocationScouting: form.maxLocationScouting,
         maxVideoGenerations: form.maxVideoGenerations,
+        maxJobPosts:                form.maxJobPosts,
+        maxRecruiterAccounts:       form.maxRecruiterAccounts,
+        maxPsychometricAssessments: form.maxPsychometricAssessments,
+        maxAiCredits:               form.maxAiCredits,
+        maxCoachSessions:           form.maxCoachSessions,
+        maxJobApplications:         form.maxJobApplications,
       }
       if (form.extraQuotas.trim()) {
         try { body.extraQuotas = JSON.parse(form.extraQuotas) }
@@ -829,6 +855,19 @@ export default function SubPlansPage() {
                   <QRow label="Bookings"              field="maxBookings"         val={form.maxBookings}         onChange={set} />
                   <QRow label="Location Scouting"     field="maxLocationScouting" val={form.maxLocationScouting} onChange={set} />
                   <QRow label="AI Video Generations"  field="maxVideoGenerations" val={form.maxVideoGenerations} onChange={set} />
+                </div>
+              </div>
+
+              {/* ── AI & Extra Quotas ── */}
+              <div>
+                <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2">AI & Platform Quotas</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <QRow label="AI Credits"               field="maxAiCredits"               val={form.maxAiCredits}               onChange={set} />
+                  <QRow label="Coach Sessions"           field="maxCoachSessions"           val={form.maxCoachSessions}           onChange={set} />
+                  <QRow label="Psychometric Assessments" field="maxPsychometricAssessments" val={form.maxPsychometricAssessments} onChange={set} />
+                  <QRow label="Job Posts"                field="maxJobPosts"                val={form.maxJobPosts}                onChange={set} />
+                  <QRow label="Job Applications"         field="maxJobApplications"         val={form.maxJobApplications}         onChange={set} />
+                  <QRow label="Recruiter Accounts"       field="maxRecruiterAccounts"       val={form.maxRecruiterAccounts}       onChange={set} />
                 </div>
               </div>
 
